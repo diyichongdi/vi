@@ -1,58 +1,1929 @@
 <!DOCTYPE html>
+<!--
+  元素周期表 · 高中化学 — Wallpaper Engine Web 壁纸
+  背景模块：HALOFLUX
+  HALOFLUX © 2026 Ryder191 (RYDER CODE / Ms MAIKEBAIs CAT). All rights reserved.
+  Licensed under the PolyForm Noncommercial License 1.0.0 — 仅限非商业用途，禁止任何商业用途。
+  Source: https://github.com/Ryder191/haloflux
+  本文件对背景源码的修改：隐藏 HUD、全屏 stage、音频静音，仅作背景层使用。
+-->
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>名单台账·打印版</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='%231a1a1a'/><text x='16' y='23' font-size='18' text-anchor='middle' fill='white' font-family='sans-serif'>名</text></svg>">
+<link rel="icon" href="data:,">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>元素周期表 · 高中化学</title>
 <style>
+:root{
+  --cell: clamp(42px, min(4.5vw, 7.3vh), 104px);
+  --gap: clamp(3px, .42vw, 8px);
+  --ink: #e8ecf7;
+  --muted: #93a0bb;
+  --glass: rgba(14,18,30,.62);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:
+    radial-gradient(1100px 760px at 18% 8%, #0c1730 0%, rgba(4,6,12,0) 62%),
+    radial-gradient(900px 700px at 86% 92%, #08192a 0%, rgba(4,6,12,0) 60%),
+    radial-gradient(700px 520px at 52% 42%, #0a1020 0%, rgba(4,6,12,0) 70%),
+    #04060c;
+  color:var(--ink);
+  font-family:"Segoe UI","SimSun-ExtB","Microsoft YaHei","PingFang SC","Hiragino Sans GB","Source Han Sans SC",sans-serif;
+  overflow:hidden; user-select:none;
+}
+/* ===== HaloFlux 动态背景 ===== */
+.halo-bg{position:fixed;inset:0;width:100%;height:100%;border:0;z-index:-5;pointer-events:none;
+  opacity:.8;mix-blend-mode:screen;filter:saturate(.55) contrast(1.05) brightness(.9) blur(1.8px);}
+.halo-veil{position:fixed;inset:0;z-index:-4;pointer-events:none;background:
+  radial-gradient(ellipse 78% 70% at 50% 46%,rgba(4,6,12,.60) 0%,rgba(4,6,12,.48) 44%,rgba(4,6,12,.28) 74%,rgba(4,6,12,.12) 100%),
+  linear-gradient(180deg,rgba(4,6,12,.42),rgba(4,6,12,.12) 32%,rgba(4,6,12,.12) 68%,rgba(4,6,12,.48));}
+.vignette{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(0,0,0,.6) 100%);}
 
-@page { size: A4; margin: 12mm 13mm 13mm; }
-html,body { margin:0; padding:0; }
-* { box-sizing: border-box; }
-html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-body {
-  font-family: "Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",system-ui,sans-serif;
-  font-size: 10.5pt; line-height: 1.52; color:#141414;
-  max-width: 210mm; margin: 0 auto;
+/* ===== 顶栏 ===== */
+.wrap{position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(12px,2.2vh,26px) clamp(10px,2vw,28px) 10px;}
+.head{width:min(96vw,1780px);display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:clamp(8px,1.4vh,18px);}
+.title{font-size:clamp(20px,2.5vw,34px);font-weight:800;letter-spacing:.06em;margin:0;
+  background:linear-gradient(100deg,#a5b4fc,#67e8f9 45%,#f0abfc 90%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 18px rgba(99,102,241,.35));
 }
-.doc-title { font-size: 15pt; font-weight: 700; text-align:center; margin: 2pt 0 2pt; letter-spacing: 1px; }
-.doc-sub { text-align:center; font-size: 9pt; color:#666; margin: 0 0 8pt; }
-.doc-line { border-bottom: 1.5pt solid #222; margin-bottom: 8pt; }
-.person { page-break-inside: avoid; margin: 0 0 7pt; padding: 4pt 0 5pt; border-bottom: 0.5pt solid #c9c9c9; }
-.person.crossed .hdr { text-decoration: line-through; text-decoration-thickness: 1.5px; color:#8a8a8a; }
-.person:last-of-type { border-bottom: none; }
-.hdr { font-weight: 700; font-size: 11pt; margin: 0 0 2.5pt; }
-.lv1 { padding-left: 12pt; }
-.lv2 { padding-left: 26pt; }
-.lv3 { padding-left: 40pt; }
-.appendix { margin-top: 10pt; }
-.appendix h2 { font-size: 12pt; margin: 0 0 4pt; }
-.appendix .alv1 { padding-left: 6pt; }
-.appendix .alv2 { padding-left: 18pt; }
-.appendix .alv3 { padding-left: 30pt; }
-.case { page-break-inside: auto; margin-bottom: 8pt; }
-@media screen {
-  body { background:#e9e9ec; padding: 18px 0; }
-  .sheet { background:#fff; max-width: 200mm; margin: 0 auto 18px; padding: 12mm 13mm; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
-}
-@media print {
-  body { background:#fff; padding: 0; }
-  .sheet { max-width:none; margin:0; padding:0; box-shadow:none; }
-}
+.sub{font-size:clamp(10px,1vw,13px);color:var(--muted);letter-spacing:.14em;margin-top:4px;}
+.legend{display:flex;gap:6px 12px;flex-wrap:wrap;justify-content:flex-end;max-width:62%;}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:clamp(9px,.82vw,12px);color:#c7d2ea;background:rgba(8,12,22,.62);border:1px solid rgba(255,255,255,.09);padding:3px 9px;border-radius:999px;backdrop-filter:blur(6px);}
+.dot{width:9px;height:9px;border-radius:50%;box-shadow:0 0 10px currentColor;}
+.newtag{font-size:8px;padding:1px 4px;border-radius:4px;background:linear-gradient(90deg,#f472b6,#fb923c);color:#fff;margin-left:2px;letter-spacing:0;}
 
+/* ===== 周期表 ===== */
+.pt{display:grid;
+  grid-template-columns:repeat(18,var(--cell));
+  grid-template-rows:repeat(7,var(--cell)) 13px repeat(2,var(--cell));
+  gap:var(--gap);
+  justify-content:center;
+}
+.cell{
+  position:relative;border-radius:9px;border:1px solid rgba(255,255,255,.085);
+  background:linear-gradient(160deg,rgba(30,38,60,.86),rgba(13,18,32,.84) 55%,rgba(5,9,18,.9));
+  color:var(--ink);cursor:pointer;padding:4px 5px;text-align:center;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  transition:transform .22s cubic-bezier(.2,.7,.3,1),box-shadow .22s,border-color .22s,background .22s;
+  opacity:0;transform:translateY(14px) scale(.97);
+  animation:pop .5s cubic-bezier(.2,.7,.3,1) forwards;animation-delay:var(--d);
+  will-change:transform,opacity;
+}
+.cell::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.55;}
+.cell::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 0%,color-mix(in srgb,var(--c) 16%,transparent),transparent 60%);opacity:.55;pointer-events:none;}
+@keyframes pop{to{opacity:1;transform:translateY(0) scale(1)}}
+.cell .num{position:absolute;top:4px;left:6px;font-size:clamp(7px,.62vw,11px);color:#8b98b6;}
+.cell .sym{position:relative;font-size:clamp(13px,1.42vw,27px);font-weight:800;line-height:1;letter-spacing:.02em;color:var(--c);text-shadow:0 0 14px color-mix(in srgb,var(--c) 55%,transparent);margin-top:2px;}
+.cell .cn{position:relative;font-size:clamp(8px,.72vw,12px);color:#b9c4dc;margin-top:2px;white-space:nowrap;}
+.cell .m{position:absolute;bottom:3px;right:6px;font-size:clamp(6px,.55vw,9px);color:#7f8bab;}
+.cell.small .sym{font-size:clamp(10px,1.05vw,19px);}
+.cell:hover{z-index:3;transform:translateY(-4px) scale(1.07);border-color:var(--c);
+  box-shadow:0 0 0 1px var(--c),0 10px 34px color-mix(in srgb,var(--c) 38%,transparent),inset 0 0 22px color-mix(in srgb,var(--c) 16%,transparent);}
+.cell.active{z-index:4;transform:translateY(-3px) scale(1.05);border-color:var(--c);
+  box-shadow:0 0 0 1.5px var(--c),0 0 34px color-mix(in srgb,var(--c) 55%,transparent);}
+.placeholder{
+  grid-column:3;border-radius:9px;border:1px dashed rgba(255,255,255,.18);
+  background:rgba(8,12,22,.55);color:#8ea0c4;font-size:clamp(8px,.72vw,12px);
+  display:flex;align-items:center;justify-content:center;letter-spacing:.05em;
+}
+.fgap{grid-column:1/-1;grid-row:8;}
+.blocklabel{grid-column:1/3;align-self:center;color:#6f7ea3;font-size:clamp(8px,.7vw,11px);letter-spacing:.12em;}
+
+/* ===== 详情弹窗卡片 ===== */
+.scrim{position:fixed;inset:0;background:rgba(2,4,9,.68);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:40;}
+.scrim.show{opacity:1;pointer-events:auto;}
+.detail{
+  position:fixed;left:50%;top:50%;z-index:50;
+  width:min(760px,92vw);max-height:84vh;
+  transform:translate(-50%,-50%) scale(.93);opacity:0;pointer-events:none;
+  transition:transform .34s cubic-bezier(.22,.8,.28,1),opacity .28s ease;
+  background:linear-gradient(165deg,rgba(21,27,45,.97),rgba(8,11,21,.98));
+  border:1px solid rgba(255,255,255,.12);border-radius:18px;
+  box-shadow:0 30px 90px rgba(0,0,0,.72),0 0 60px color-mix(in srgb,var(--c,#4dabf7) 10%,transparent);
+  display:flex;flex-direction:column;overflow:hidden;
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+}
+.detail.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:auto;}
+.d-accent{position:absolute;left:0;top:0;height:3px;width:100%;z-index:2;background:linear-gradient(90deg,var(--c,#4dabf7),transparent);}
+.d-body{padding:18px 20px 22px;overflow-y:auto;flex:1;}
+.d-top{display:flex;align-items:center;gap:16px;}
+.d-sym{font-size:clamp(44px,5vw,64px);font-weight:900;line-height:.95;color:var(--c,#4dabf7);text-shadow:0 0 26px color-mix(in srgb,var(--c,#4dabf7) 55%,transparent);}
+.d-id{flex:1;}
+.d-cn{font-size:19px;font-weight:700;}
+.d-en{font-size:12px;color:var(--muted);letter-spacing:.06em;}
+.d-cat{display:inline-block;margin-top:6px;font-size:11px;padding:2px 9px;border-radius:999px;background:color-mix(in srgb,var(--c,#4dabf7) 18%,transparent);color:var(--c,#4dabf7);border:1px solid color-mix(in srgb,var(--c,#4dabf7) 40%,transparent);}
+.d-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#cbd5ea;font-size:18px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;}
+.d-close:hover{background:rgba(255,255,255,.12);}
+.d-sec{margin-top:18px;}
+.d-sec h3{font-size:11px;font-weight:600;letter-spacing:.16em;color:#7d8db3;margin:0 0 8px;text-transform:uppercase;}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;}
+.kv .item{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:7px 10px;}
+.kv .k{font-size:10px;color:#7d8db3;}
+.kv .v{font-size:13px;font-weight:600;margin-top:2px;word-break:break-word;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.tchip{font-size:11px;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#cdd7ee;}
+.config{font-family:"Cascadia Code","Consolas",monospace;font-size:13px;line-height:1.6;color:#dbe6ff;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px 12px;}
+.shell{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.shell .k{font-size:11px;color:#8b9ab8;margin-right:2px;}
+.shell .s{font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;background:color-mix(in srgb,var(--c,#4dabf7) 14%,transparent);color:color-mix(in srgb,var(--c,#4dabf7) 80%,#fff);border:1px solid color-mix(in srgb,var(--c,#4dabf7) 30%,transparent);}
+.notes{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:7px;}
+.notes li{font-size:12.5px;line-height:1.62;color:#cbd5ea;}
+.notes li::marker{color:var(--c,#4dabf7);}
+.uses{font-size:12.5px;line-height:1.7;color:#b7c2dc;}
+
+.hint{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);font-size:11px;letter-spacing:.16em;color:#6d7a99;z-index:5;pointer-events:none;}
+.count{position:fixed;right:22px;bottom:12px;font-size:11px;color:#5f6b8a;letter-spacing:.1em;z-index:5;}
+.credit{position:fixed;left:20px;bottom:12px;font-size:10px;color:#5f6b8a;letter-spacing:.06em;z-index:5;pointer-events:auto;}
+.credit a{color:#7d8db3;text-decoration:none;border-bottom:1px dotted rgba(125,141,179,.4);}
+
+@media (max-width:760px){
+  .legend{max-width:100%;justify-content:flex-start;}
+  .detail{width:94vw;max-height:88vh;}
+  .cell .m{display:none;}
+}
+@media (prefers-reduced-motion:reduce){
+  .cell{animation:none;opacity:1;transform:none;}
+}
 </style>
 </head>
 <body>
-<div class="sheet">
-  <div class="doc-title">名单台账（打印版）</div>
-  <div class="doc-sub">共 43 条（划去 3 条）· A4 · 打印请关闭浏览器缩放、页眉页脚</div>
-  <div class="doc-line"></div>
-  <div class="person"><div class="hdr">【01】包嵘｜310115201003311167｜2010-03-31｜13981222960（移动·四川-广元）</div><div class="lv1">户籍编号：HJ963845</div><div class="lv1">地址：上海市浦东新区北艾路828弄26号201室</div><div class="lv1">银行卡：6223690089996041</div><div class="lv1">家人：包海昕 31010719760808501x 女/1976-08-08 上海市普陀区</div><div class="lv3">手机：13661551250（移动·上海）｜QQ：1126249408｜微信：海（wxid_fobtso5lw7s234）</div><div class="lv3">地址：水电路1421弄5号301室；上海市长宁区新泾镇仙霞西路779号4号楼2楼；上海市浦东新区北蔡镇北艾路828弄26号201室</div><div class="lv3">关联人员：刘军 13916447335；卞荣星 13918625691/13052003609；王道园 13761719064；季雯洁 13501674069（均仙霞西路779号）</div></div><div class="person"><div class="hdr">【02】顾依文｜310101201002144223｜2010-02-14｜15075616978</div><div class="lv1">地址：上海市黄浦区学宫街11弄2号；上海市嘉定区马陆镇双单路1509弄254号301室</div><div class="lv1">家人：钟惠民 31010219520102007x 13524574567</div><div class="lv3">陆治平 310102194803210036 男/1948-03-21/77岁 13162860380</div><div class="lv3">顾煜 310114198111111612 男/1981-11-11/44岁 13601617521</div><div class="lv3">钟惠琴 31010219541230008x</div><div class="lv3">王海良 310108196901023258 男/1969-01-02/56岁 17717309088</div><div class="lv3">张月英 310102195205050022 女/1952-05-05/73岁 13162860380</div><div class="lv3">徐扣宝 310102194210123228 女/1942-10-12/83岁 15921661673</div><div class="lv3">崔静 310102197011163220 女/1970-11-16/55岁 13818053583</div><div class="lv3">钟子恺 310102198207064456 男/1982-07-06/43岁 18616551780</div><div class="lv3">崔颖 310102197308133225 女/1973-08-13/52岁 13621623275</div></div><div class="person"><div class="hdr">【03】郭亦轩｜310103201006144047｜2010-06-14｜籍贯：浙江省海盐县</div><div class="lv1">地址：上海市徐汇区桂林西街47弄85号502室</div><div class="lv1">家人：郭炜纲 310109197507095211 13701704972</div><div class="lv3">组织：中共上海新路达资产管理有限公司第一党支部</div><div class="lv3">地址：上海市普陀区长寿路街道中山北路2500号；上海市闵行区七宝镇漕宝路1555弄3号201室；上海市闵行区七宝镇漕宝路1555号3号201室</div></div><div class="person"><div class="hdr">【04】韩钰｜130728201002042525｜2010-02-04</div><div class="lv1">户籍：河北省张家口市怀安县左卫镇太平街小学路27号</div><div class="lv1">地址：上海市黄浦区半淞园路街道瞿溪路120弄16号302室；上海市黄浦区半淞园路街道西凌家宅路111弄3号702室</div><div class="lv1">家人：陈爱新 130731198410070027 18702163112</div><div class="lv3">韩跃飞 130728198309102516 上海市黄浦区打浦桥街道斜土路251弄3号201 13818858903</div><div class="lv3">单位：上海汇泰广告有限公司</div></div><div class="person"><div class="hdr">【05】蒋慧妍｜310101201006262227｜2010-06-26｜女｜上海市黄浦区｜13817332452</div><div class="lv1">家人：祝梅芳 310102198207111224 女/1982-07-11/43岁 13817332452</div><div class="lv3">邮箱：zmf711@hotmail.com / 18104070@qq.com</div><div class="lv3">地址：上海制造局路567弄46号202室；上海市闵行区莘朱路1688弄22号601；上海市闵行区梅陇镇莘朱路1688弄30号1302室虹梅佳苑</div><div class="lv3">真户籍：上海市浦东新区高青西路667弄1号2403室</div><div class="lv3">银行：农业银行（余额1000万以上）</div><div class="lv3">QQ：18104070｜微博：1869954780｜微信：wxid_dacnr4tq4b3o91</div><div class="lv3">设备：imei 863164040812083（Huawei EBG-AN10）</div><div class="lv3">账号：京东 migga/melanie711｜天涯 melanie_zhu711｜优酷</div><div class="lv3">华住会员ID：3782410</div><div class="lv3">关联：丁根妹、颜俊、丁根保、颜仁才、丁根生（13817332452 同电话关联）</div><div class="lv3">祝梅芳 310226196808054947 女/1968-08-05/57岁 上海市浦东新区洋泾镇路孟家宅57号</div><div class="lv3">蒋震宇 310101197105112815 男/1971-05-11/54岁</div><div class="lv3">蒋震宇 310104197403310018 男/1974-03-31/51岁</div><div class="lv3">蒋震宇 310104198012244038 男/1980-12-24/44岁（略）</div></div><div class="person"><div class="hdr">【06】蒋欣扵｜310108201001290522｜2010-01-29｜13564676007、13811895385</div><div class="lv1">地址：上海市口腔病防治院分院 复兴中路1258号6楼信息科；上海市黄浦区打浦桥街道丽园路502号城申公寓1604室</div><div class="lv1">家人：蒋永耀 310103198606094034 上海市卢湾区南昌路110弄6号 13664894161/14582635291/18616359025</div><div class="lv3">王肇莉 310103195505252888 上海市嘉定区南翔镇金润路465弄1号703室 13482635291</div><div class="lv3">汪业奂 310104198410282822 上海市黄浦区南昌路110弄6号；上海市徐汇区枫林街道中山南二路932弄6号1203室 13564676007</div><div class="lv3">蒋睿琦 310101201701136257 上海市卢湾区南昌路110弄6号</div><div class="lv3">蒋宝祥 310103194706062832 上海市徐汇区湖南路街道陕西南路186弄8号2楼</div><div class="lv3">蒋永福 310103198008142833 上海市口腔病防治院分院 复兴中路1258号6楼信息科；上海市黄浦区打浦桥街道丽园路502号城申公寓1604室</div><div class="lv3">蒋妙曙 310103195203242836 13795438398/13482635291</div><div class="lv3">蒋克勤 310103193305162811 李竺娣</div></div><div class="person"><div class="hdr">【07】凌知微｜410202201003170103｜2010-03-17｜河南省开封市龙亭区</div><div class="lv1">地址：上海市松江区洞泾镇泗砖南路1500弄长泰西郊376号；上海市浦东新区三林镇三林路158号创慧尚博产业园6号楼3楼；上海市闵行区剑川路951号5幢1层（集中登记地）；瞰见科技（上海）有限公司</div><div class="lv1">关联人1：凌云 360111197408280017 男/1974-08-28/51岁 13701840202</div><div class="lv3">微博：https://weibo.com/u/3146987861｜微信：wxid_6f32nrfa8inp71</div><div class="lv3">地址：江西省南昌市青山湖区；上海市南汇区周浦镇川周路4502弄10号102室乙；上海市松江区洞泾镇泗砖南路1500弄长泰西郊376号；上海黄浦区城区局门路一弄中汇公寓3号901室</div><div class="lv3">设备：imei 356876212897428；同电话IMEI 356876212897436、866522033769239；TAC 35687621（Apple iPhone 12 A2404）</div><div class="lv1">关联：凌峰 车牌号 沪EK0150 车辆型号 SGM7161LE</div></div><div class="person"><div class="hdr">【08】罗伊伊｜310112200910163627｜女｜2009-10-16｜16岁｜16621686160、18621931072</div><div class="lv1">户籍：上海市闵行区罗锦路888弄5支弄11号501室</div><div class="lv1">现住：上海市闵行区梅陇镇罗锦路888弄11号501室</div><div class="lv1">籍贯：江西省波阳县</div><div class="lv1">家人：罗琼碧 360203197701213513 13701866076</div><div class="lv3">唐晓丹 362128198112200026 女/1981-12-20/44岁 江西省赣州地区龙南县</div></div><div class="person"><div class="hdr">【09】沈瑞琪｜330783200907165420｜2009-07-16｜身份证归属地：浙江省金华市东阳市</div><div class="lv1">银行卡：6231900044880640（19000448806）</div><div class="lv1">关联：虞华娟/无法选中</div></div><div class="person"><div class="hdr">【10】孙静涵｜330106201004185542｜2010-04-18｜女｜浙江省杭州市西湖区｜16524678646、15601620028、15821229604、17621065111</div><div class="lv1">户籍：上海市浦东新区临沂路101弄47号304室</div><div class="lv1">家人：方静 330122198110291862 女/1981-10-29/43岁 17621065111/15821229604</div><div class="lv3">地址：上海市长宁区新华路街道法华镇路751弄13号702室；番禹路586号商务大楼3楼SDA；法华镇路751弄27号502室；上海市宝山区杨行镇杨鑫路杨泰2村272号101室；上海市浦东新区南码头路街道东方路3261号A座</div><div class="lv3">名下企业：龙港市方霖纸塑制品厂（92330383MA2JB32E3K）</div></div><div class="person"><div class="hdr">【11】田洛苇｜310107201008244928｜2010-08-24｜生肖：虎｜星座：处女座（庚寅年七月十五）｜13681719631、13916118848</div><div class="lv1">户籍：上海市普陀区中江路1067弄153号401室</div><div class="lv1">快递地址：上海普陀区城区中江路1067弄125号201；上海市普陀区梅川路901号菜鸟驿站021-52804700；上海市普陀区长征镇速递易SH申汉小区A座速递易；上海市普陀区长征镇中江路1067弄125号201；上海市普陀区中江路919号全家便利菜鸟驿站02152687360/52687360</div><div class="lv1">关联人1：张燕华 310107197811032028 女/1978-11-03/46岁 13681719631</div><div class="lv3">快递地址：上海市普陀区中医医院万里分部门诊输液新村路1317号</div><div class="lv3">地址：上海市普陀区真如镇街道曹杨路1261号普陀中医医院候诊</div><div class="lv1">关联人2：张荣妹 310107195704302062 女/1957-04-30/68岁 13032110329</div></div><div class="person crossed"><div class="hdr">【12】王可馨（划去：重复过多无法锁定）</div></div><div class="person"><div class="hdr">【13】王梓涵｜310110201001255649｜2010-01-25｜籍贯：山东省胶县｜15900598006</div><div class="lv1">地址：上海市黄浦区凤阳路288号1202室；上海市浦东新区东明路街道环林西路848弄6号402室</div><div class="lv1">家人：葛邦和 310101194811251632 男/1948-11-25/77岁 13641734075</div></div><div class="person"><div class="hdr">【14】吴彤｜310230201003271467｜2010-03-27｜男｜上海市崇明县｜籍贯：江西省玉山县｜15079036170（移动·江西-南昌）</div><div class="lv1">户籍编号：HJ3853757</div><div class="lv1">户籍：上海市崇明区城桥镇乔松路899弄79号201室</div><div class="lv1">婚姻：未婚｜学历：初中｜职业：学生｜民族：汉｜身高：165.0</div><div class="lv1">银行卡：6223690055961176</div><div class="lv1">家人：吴振华 362323198109280052</div></div><div class="person"><div class="hdr">【15】夏羽洁｜17682785339｜安徽 宿州</div><div class="lv1">地址：上海市长宁区东诸安浜路180弄1-23号东浜小区11号楼304号</div><div class="lv1">备注：/#*\非上海人</div></div><div class="person"><div class="hdr">【16】杨欣琳｜310101201007153743｜2010-07-15｜13818601715</div><div class="lv1">备注：另有假证件 310118200909050228（女/2009-09-05/16岁/广东韶关/15800799365）</div></div><div class="person"><div class="hdr">【17】张若涵｜310110201002131023｜2010-02-13｜上海市杨浦区</div><div class="lv1">户籍编号：HJ733989</div><div class="lv1">地址：上海市浦东新区崂山路80弄10号302室</div><div class="lv1">家人：王莉莉（上海市黄浦区人民政府淮海中路街道办事处）</div><div class="lv3">张明（环保成套）</div></div><div class="person"><div class="hdr">【18】章悦桐｜330212200911072320｜2009-11-07｜浙江省宁波市鄞州区｜13777055065</div><div class="lv1">地址：宁波市鄞州区堇山小学；首南街道雍城世家53幢1102室</div><div class="lv1">家人：章恒瑞、章华利（弟弟）</div></div><div class="person"><div class="hdr">【19】董凡宁｜320103201008200016｜2010-08-20｜江苏 南京市白下区</div><div class="lv1">地址：上海市黄浦区凤阳路415号；上海市虹口区东大名路908号2702室；上海市虹口区欧阳路街道欧阳路377弄4号202室；上海市虹口区四川北路街道甜爱路30弄4号；上海市虹口区曲阳路街道运光路5弄4号201室；上海市虹口区欧阳路街道欧阳路377号4号202室；上海市长宁区新华路街道延安西路1328弄5号702室</div><div class="lv1">现住：南京运光路5弄4号201室</div><div class="lv1">家人：董佳（保密）</div><div class="lv3">周灿峰 321282198312010062 13818185616</div></div><div class="person"><div class="hdr">【20】贾子煊｜310112201003032417｜2010-03-03｜13932333706</div><div class="lv1">户籍：上海市徐汇区桂林西街9弄36号101室</div><div class="lv1">居所：上海市徐汇区康健街道桂林西街9弄36号101室</div><div class="lv1">家人：贾钫泽 310112201306062453 2013-06-06 15001700314/18321729161</div><div class="lv3">贾广沂 370401984070865411 男/1984-07-08/40岁 山东省枣庄市峄城区 15000100064</div><div class="lv3">贾继文 370404195208085431 男/1952-08-08/73岁</div><div class="lv3">范潇颖 310102198304031728 女/1983-04-03/42岁</div></div><div class="person"><div class="hdr">【21】蒋兆钧｜321002201001140013｜男｜2010-01-14｜15岁｜江苏扬州市广陵区｜籍贯：浙江省诸暨县</div><div class="lv1">户籍：上海市闵行区山花路108弄16号601室</div><div class="lv1">现住：上海市闵行区莘庄镇山花路108弄16号601室</div><div class="lv1">家人：朱小川 321002198208060323 女/1982-08-06/43岁 江苏扬州市广陵区 15001743235/15900572204/13601674999</div><div class="lv3">车牌：苏K989J0</div><div class="lv3">快递地址：上海市徐汇区漕宝路8号上海市第八人民医院内二科</div><div class="lv3">案件识别码：ws531fc2755e218e54（见附件）</div><div class="lv3">朱亦祥 321002195002250312 男/1950-02-25/75岁 江苏扬州市广陵区立新路4号2幢202室</div></div><div class="person"><div class="hdr">【22】李浩钰｜310104200910092857｜2009-10-09｜籍贯：河南省镇平县｜15221140473、15821525285</div><div class="lv1">地址：上海市黄浦区复兴中路113弄25号101室；上海市徐汇区东安二村20号甲13室；上海市浦东新区南码头路街道东方路1881弄4号1303室；上海市浦东新区南码头路街道东方路2851弄18号201室；上海市浦东新区北蔡镇成山路2388弄106号</div></div><div class="person"><div class="hdr">【23】卢越｜310101201001163211｜2010-01-16｜13361801062、13501819880</div><div class="lv1">地址：上海市黄浦区五里桥街道鲁班路388弄15号2902室；上海市黄浦区五里桥街道鲁班路388弄6号1001室</div><div class="lv1">户籍：上海市徐汇区枫林路街道小木桥路360弄21号303室</div><div class="lv1">案件识别码：ws74b7e1ac002a0aa8；wsc4fdbc20959d140b（见附件）</div><div class="lv1">家人：朱文娟</div><div class="lv3">卢岑飞 320681198402287617 男/1984-02-28/40岁 江苏南通启东 13311801089/13501819880</div><div class="lv3">邮箱：lu.cen.fei@163.com</div></div><div class="person"><div class="hdr">【24】陆子译｜110108200910210030｜2009-10-21｜北京市海淀区｜15123164785</div><div class="lv1">家人：陆沛</div></div><div class="person"><div class="hdr">【25】毛嘉濠｜310101200912163218｜2009-12-16｜籍贯：湖南省衡东县｜18765643939、18667337383、13918384535</div><div class="lv1">户籍：上海市黄浦区王家嘴角街12号；上海市黄浦区小东门街道荷花池居委209弄2号199室</div><div class="lv1">地址：上海市杨浦区市光一村70号1708室；上海市杨浦区殷行街道市光一村70号</div><div class="lv1">家人：张洪娣 310102194910092848 女/1949-10-09/76岁 13564980516</div><div class="lv3">陈海新 310102197202212419 男/1972-02-21/53岁 13818853226</div><div class="lv3">杨漪 31011019850906518x 15900643001</div><div class="lv3">王振林 310102194708142442 女/1947-08-14/78岁 13918312617</div><div class="lv3">张爱莲 310110197509142021 女/1975-09-14/50岁 15021320417</div><div class="lv3">江强 310102195601072821 女/1956-01-07/69岁 13611741454</div></div><div class="person"><div class="hdr">【26】任啸威｜310103201005294019｜2010-05-29｜籍贯：浙江省鄞县｜16685834996、13661847235</div><div class="lv1">地址：上海市黄浦区南昌路209弄2号</div><div class="lv1">家人：马云珠 310103194612243288 女/1946-12-24/79岁 13501910387</div><div class="lv3">蒋景玲 31010419520622164x 13701797058</div><div class="lv3">黄素琍 31010319540813322x 13671553412</div><div class="lv3">夏佩芬 330204195203022126 女/1952-03-02/73岁 13818339032</div><div class="lv3">严颖 310103194601123221 女/1946-01-12/79岁 13601982554</div><div class="lv3">王惺 31010419800908124x 13916388172</div><div class="lv3">叶润 310104197505222430 男/1975-05-22/50岁 13901835656</div><div class="lv3">任杰 330203197307281512 男/1973-07-28/52岁 13701701806</div><div class="lv3">叶钧豪 310107201205220415 男/2012-05-22/13岁 18516208318</div><div class="lv3">荣佳婕 310103199003204024 女/1990-03-20/35岁 13774266007</div></div><div class="person"><div class="hdr">【27】沈俊豪（存疑｜同名多条）</div><div class="lv1">记录①｜310103201007275014｜男｜2010-07-27｜上海市卢湾区｜13331986916、13564179345</div><div class="lv2">户籍：上海市黄浦区合肥路100号</div><div class="lv2">快递地址：上海市静安区南京西路街道石门一路288号兴业太古汇一座47楼；上海市黄浦区五里桥街道斜土路118弄3号808室；上海市静安区石门二路街道南京西路758号汇银大厦20楼；上海市黄浦区打浦桥街道丽园路514弄2号106室</div><div class="lv2">同户人：孙少敏 310103195404141249 女 18021056916</div><div class="lv3">沈兴隆 310103195308041256 男 13818856925</div><div class="lv3">沈俊豪 310103201007275014 13331986916/13564179345</div><div class="lv3">陈爱平 310103195812260087 女 15001902305（地址：上海市闸北区普善路390弄1号楼603室）</div><div class="lv1">记录②｜310109201007234552｜男｜2010-07-23｜上海市虹口区｜13524314667</div><div class="lv2">户籍：上海市虹口区新市南路1100弄8号201室</div><div class="lv2">同户人：沈志伟 310109198004096030 男 18683601526/13917104208</div><div class="lv3">沈俊豪 310109201007234552 13524314667</div><div class="lv3">徐俊杰 310109201407094552 13524314667（地址：虹口区新市南路1100弄8号201室；车站北路715弄21号小龙鱼文苑幼儿园；武昌路281弄18号3楼；闻喜路930弄11号305室；场中路842弄17号101室）</div><div class="lv3">杨伟珍 310106195401250422 女 13621672202（名下企业：上海市虹口区伟伟杂货店 江湾街道 92310109MA1KM7D688）</div><div class="lv1">记录③｜220381201001095053｜男｜2010-01-09｜吉林省四平市公主岭市｜13524466749</div><div class="lv1">另注（存疑项）：解俊伟、解冲坤</div></div><div class="person"><div class="hdr">【28】陶泓恺｜310103200911026070｜2009-11-02｜男｜上海市卢湾区｜生肖：牛｜星座：天蝎座（己丑年九月十六）｜18621620098</div><div class="lv1">出生地：上海市卢湾区</div><div class="lv1">户籍：上海市黄浦区丽园路488弄2号1001室</div><div class="lv1">同户人：禹寿航 310102192610281226 女/1926-10-28</div><div class="lv1">家人：贾为民 340203194909080521 女/1949-09-08 13621663322/13901988206/18387905696</div><div class="lv3">案件识别码：ws459ee5869d41433f；ws9a98905d570ca13e（见附件）</div><div class="lv3">纪少华 340203194701300513 男/1947-01-30 18916705849</div><div class="lv3">案件识别码：ws459ee5869d41433f；ws9a98905d570ca13e（见附件）</div></div><div class="person crossed"><div class="hdr">【29】王晶（划去：重复过多无法锁定）</div></div><div class="person"><div class="hdr">【30】王楷程｜13917804620</div><div class="lv1">地址：上海市普陀区城区梅岭南路320弄14号1002室</div></div><div class="person"><div class="hdr">【31】王奕然｜310115201007230276｜男｜2010-07-23｜16岁｜籍贯：山东省泰安市｜13564938262</div><div class="lv1">户籍：上海市黄浦区打浦路316弄30号603室</div><div class="lv1">居所：上海市黄浦区五里桥街道打浦路316弄30号603室；上海市宝山区大场镇聚丰园路95弄17号402室</div><div class="lv1">轨迹：上海大学(上大路99号)电子电工实验中心B楼509；宝山区南陈路333号上海大学东校区翔英大楼T419；大场镇上大路99号上海大学B楼电子电工实验中心B508房间；黄浦区打浦路208号全家便利菜鸟驿站02133310582；上海市黄浦瑞金南路185弄3号801室；宝山区大场镇聚丰园路95弄17号402室；黄浦区五里桥街道打浦路316弄30号603室；上海香山东北街坊(居家桥路1030弄)号502</div><div class="lv1">家人：刘远征 222301197805151525 女/1978-05-15/48岁 吉林省白城市 13585894549</div><div class="lv3">王旭智 220103197809180059 男/1978-09-18/48岁 吉林省长春市宽城区 13564938262/13089105054</div></div><div class="person"><div class="hdr">【32】徐昊明｜310230201004205170｜男｜2010-04-20｜16岁｜籍贯：上海市青浦区｜17740810420、18918802240</div><div class="lv1">户籍：上海市黄浦区丽园路842弄42号405室</div><div class="lv1">居所：上海市黄浦区打浦桥街道丽园路842弄42号405室</div><div class="lv1">身高：107.0</div><div class="lv1">轨迹：上海市卢湾区丽园路842弄42号405室；卢湾区丽园路867号菜鸟驿站021-63051623；黄浦区五里桥街道瞿溪路758号1号楼辅楼212室；黄浦区打浦桥街道丽园路842弄42号405室</div><div class="lv1">家人：徐建国 310107196712302817 男/1967-12-30/58岁 上海市普陀区 18001793355/18784123086</div><div class="lv3">徐睿 310230197811095386 女/1978-11-09/47岁 上海市崇明县 18918802240/13918381978/13801882209/18001793355</div></div><div class="person"><div class="hdr">【33】俞越轩｜310103201006275012｜2010-06-27｜籍贯：浙江省镇海县</div><div class="lv1">户籍：上海市浦东新区梅园新村65号403室</div><div class="lv1">地址：上海市闵行区古美街道东兰路751弄22号402室；上海市闵行区古美街道万源路580弄2号1203室；上海市闵行区平南二村1号302室；上海市闵行区古美街道平南二村1号；上海市浦东新区梅园新村65号403室；上海市浦东新区南码头路街道杨高南路2140弄14号102室</div><div class="lv1">家人：孙秋婵 310115197909292522 女/1979-09-29/46岁（设备：Huawei VOG-AL00）</div><div class="lv3">轨迹：上海虹口区中山北二路800号1号楼413室；上海虹口区曲阳路街道中山北一路800号1号楼412室；上海市闵行区古美街道东兰路751弄22号402室；上海市闵行区平南二村1号302室；上海市宝山区淞南镇长江西路977号；上海市浦东新区南码头路街道杨高南路2140弄14号102室；上海市闵行区古美街道万源路580弄2号1203室；上海市徐汇区漕河泾街道漕溪新村一村38号602室；上海市浦东新区梅园新村65号403室；上海市闵行区平南二村1号302室；上海虹口区中山北二路1998号1号楼413室</div><div class="lv3">QQ：10031776</div><div class="lv3">俞帆 310104197609274411 男/1976-09-27/49岁 13761031258/18964101820</div></div><div class="person crossed"><div class="hdr">【34】袁博文（划去：重复过多无法锁定）</div></div><div class="person"><div class="hdr">【35】张佳悦｜310115200912046837｜2009-12-04｜男｜上海市浦东新区｜生肖：牛｜星座：射手座（己丑年十月十八）｜13918159724、15801872560、17701643808</div><div class="lv1">出生地：上海市浦东新区</div><div class="lv1">户籍：上海市浦东新区书院镇新北村新东501号</div><div class="lv1">快递地址：上海市浦东新区周浦镇金田二区18号101室</div><div class="lv1">同户人：张佳乐 310115200912046810 男/2009-12-04</div><div class="lv1">家人：宋文娟 310225195111294827 女/1951-11-29</div><div class="lv3">沈莉 310225197511220228 女/1975-11-22 13918159724</div><div class="lv3">快递地址：上海浦东新区周浦镇周星路500弄明天华城悦湖3期43幢1101室；南汇区周浦镇金田二区18号101室；浦东新区周浦镇南油车弄20号；南汇区周浦镇周星路500弄明天华城三期43栋1101室</div><div class="lv3">张华 310225197801234855 男/1978-01-23 13918159724/15801872560</div><div class="lv3">快递地址：上海市浦东新区周浦镇金田二区18号101室</div></div><div class="person"><div class="hdr">【36】张峻瑜（同名两人）</div><div class="lv1">同名①｜310115201008071035｜男｜2010-08-07｜16岁｜籍贯：浙江省定海县｜13818349068</div><div class="lv2">户籍：上海市浦东新区洪山路180弄2号902室</div><div class="lv2">教育情况：文盲｜身高：135.0</div><div class="lv2">轨迹：上海市浦东新区南码头路街道杨高南路2140弄21号101室；浦三路775弄1号102室；齐恒路33弄4号；周家渡街道洪山路180弄2号902室</div><div class="lv2">家人：何义碧 31010319520721084x 女/1952-07-21/74岁 上海市卢湾区 18918761815/18760942376</div><div class="lv3">高世英 310101191709144028 女/1917-09-14/109岁 上海市黄浦区</div><div class="lv3">王林根 31010319491023083x 男/1949-10-23/76岁 上海市卢湾区 13816894706/18313164998</div><div class="lv1">同名②｜310107201002255714｜男｜2010-02-25｜16岁｜籍贯：浙江省定海县｜18158095672、19121453431、18964752503</div><div class="lv2">户籍：上海市普陀区中山北路1269弄5号604室</div><div class="lv2">教育情况：文盲｜身高：138.0</div><div class="lv2">轨迹：上海市普陀区长寿路街道江宁路1291号4号楼1楼；徐汇区龙华街道丰谷路315弄14号602室；宜川路街道中山北路1269弄5号604室；长寿路街道昌化路994弄4号；长寿路街道澳门路660弄48号101室；静安区天目西路街道天目西路547号a幢1208室；明丰世纪苑(桃浦路604弄)98号202室；桃浦路体育彩票店；江宁路4号楼209</div><div class="lv2">家人：倪阿萍 330382198204154065 女/1982-04-15/44岁 浙江省温州市乐清市 13764585367/13967215999/15683722116</div></div><div class="person"><div class="hdr">【37】张燚｜31011220100818433X｜男｜2010-08-18｜16岁｜籍贯：上海市｜18918963544、13310132016</div><div class="lv1">户籍：上海市闵行区浦江镇陈行村九组13号</div><div class="lv1">居所：上海市闵行区浦锦街道陈行村4017号1幢101室；上海市闵行区浦江镇陈行村九组13号；上海市闵行区浦锦街道江汉路200弄17号</div><div class="lv1">教育情况：学龄前儿童</div><div class="lv1">轨迹：上海市闵行区浦锦街道江汉路200弄17号；浦锦街道陈行村4017号1幢101室；浦锦街道陈行村九组13号</div><div class="lv1">家人：张建文 310221196204146419 男/1962-04-14/64岁 上海市上海县 13818351962/13501621856</div><div class="lv3">康明玉 310221196401066442 女/1964-01-06/62岁 上海市上海县 18964622445/13162829676</div><div class="lv3">张敏 310112198605104313 男/1986-05-10/40岁 上海市闵行区 13310132016/18116266989/15825896325</div></div><div class="person"><div class="hdr">【38】张泽宇｜310107201005062512｜2010-05-06｜籍贯：江苏省武进县｜13818006688</div><div class="lv1">微博：1100057612</div><div class="lv1">地址：上海市普陀区中山北路1243弄6号502室；上海市宝山区大场镇大华路901弄36号304室</div><div class="lv1">轨迹：上海市卢湾区淮海中路222号力宝广场16楼；上海市长宁区新泾镇临虹路168弄1号楼；上海市宝山区大场镇大华路901弄36号304室；上海市普陀区宜川路街道中山北路1243弄6号502室</div><div class="lv1">关联人1：魏岚 310107197810304642 13818002568</div><div class="lv3">微博：1011706515</div><div class="lv3">轨迹：上海市黄浦区思南路71号中共代表团驻沪办事处纪念馆；上海市宝山区大场镇大华路901弄36号304室；华东理工大学网络教育学习平台/继续教育学院成教平台</div><div class="lv3">设备：imei 353821083811788（Apple iPhone 7 Plus A1661）</div><div class="lv1">关联人2：魏国忠 31010719690122503x 13501961308</div><div class="lv3">轨迹：上海市奉贤区南桥镇光昊路243号；上海市普陀区宜川路街道中山北路1412号820室</div><div class="lv3">设备：imei 354765082649849（Samsung SM-G9500）</div></div><div class="person"><div class="hdr">【39】周悦圻｜31010120100720423X｜2010-07-20｜13482259068</div><div class="lv1">地址：上海市黄浦区鲁班路388弄2号802室；上海市浦东新区沪东新村街道博兴路462弄12号402室；上海市浦东新区沪东新村街道博兴路465弄38号</div><div class="lv1">家人：周晟灏 310102198110314412 男/1981-10-31/43岁 13917592369</div><div class="lv3">地址：上海市黄浦区老西门街道文庙居委257号199室；上海市黄浦区中华路1358号；上海市浦东新区沪东新村街道博兴路465弄38号302室；上海市虹口区凉城新村街道凉城三村83号；上海市黄浦区五里桥街道鲁班路388弄2号802室；上海市浦东新区海阳西路399号16楼</div></div><div class="person"><div class="hdr">【40】周正东｜310106201007280816｜2010-07-28｜籍贯：江苏省泰兴市｜13818018733</div><div class="lv1">地址：上海市长宁区长宁路398号3F室</div><div class="lv1">家人：朱冬妮 310106198311080822 13818018733</div><div class="lv3">户籍：上海市黄浦区进贤路186号</div><div class="lv3">地址：上海市静安区万航渡路778号；上海市静安区曹家渡街道万航居委858弄18号101室；上海市长宁区华阳路街道华阳路398号404室；上海市黄浦区瑞金二路街道进贤路186号；上海市长宁区华阳路街道华阳路398号306室；上海市长宁区华阳路街道华阳路398号305室</div><div class="lv3">关联家人：刘至垚 310103199510025012 13455599867/15901730020/18019078385</div><div class="lv3">朱牮 310103194902011231 13774467477</div><div class="lv3">黄立颖 310113197412305727 13916933127/18001931990</div><div class="lv3">戴月霞 310223194506192828 13524483933</div><div class="lv3">颜敏慧 31010719851118258x 13817758060/15921789613</div><div class="lv3">汤帼英 310103195001303282 15821444329</div><div class="lv3">乐志骏 310103197806083212 13621912104/15905345557</div><div class="lv3">周正楠 310101202012316257</div></div><div class="person"><div class="hdr">【41】沈力刚｜310101198102081536｜1981-02-08｜双鱼座｜13621692557</div><div class="lv1">户籍：上海市黄浦区福州路420弄17号二楼后间</div><div class="lv1">地址：上海市浦东新区栖山路1555弄33号9A（901）；上海市浦东新区洋泾街道崮山路322弄34号602室；上海市浦东新区金杨新村街道栖山路1555弄33号901室</div><div class="lv1">邮箱：24730236@qq.com</div><div class="lv1">轨迹：三泉路1495弄41号6楼602室；上海市黄浦区外滩街道福州路420弄17号</div><div class="lv1">设备：imei 860434050158849（Huawei BRQ-AN00）</div><div class="lv1">家人：周伟平 310101195312122443 女/1953-12-12/72岁 13524573335</div><div class="lv3">沈杰 310101195304192433 男/1953-04-19/72岁 13661738597</div><div class="lv3">沈弈瑶（女儿）</div><div class="lv1">关联同学（上海市光明中学）：朱锐清 13501736331；支晓玮 15800966627；许一红 13611781545；吴亚楠 15021555857；孙丹 13601725887；龚益婧 13585802238；戴剑安 13817272432；顾晓瑛 15000987654；居贝妮 13818152507；沈永标 13046673777；张艺 13818007102；周漪 18602117585；张娴 13641991789；孙思莹 13901621480；邹艳 18916628757</div></div><div class="person"><div class="hdr">【42】吴玲华｜310101195809074088｜1958-09-07｜天秤座｜67岁｜13918219758、13501735530</div><div class="lv1">地址：上海市浦东新区浦电路330弄53号102室；上海市浦东新区东书房路390弄22号203室；上海市静安区彭浦新村街道三泉家园三泉路999弄102号901室；上海市中华新路288弄4号1502室；上海市静安区宝山路街道中华新路288弄4号1502室</div><div class="lv1">QQ：1735502522｜微博：https://www.weibo.com/u/1004532683｜IMEI：356706080061619</div><div class="lv1">关联：吴明容 513030197301253021 女 四川省达川地区渠县 13918219758</div><div class="lv3">杜境 371324198512111926 女 山东省临沂市苍山县 13918219758</div></div><div class="person"><div class="hdr">【43】田秋华｜310101197609282025｜1976-09-28｜49岁｜13801714362、13764582363</div><div class="lv1">户籍：上海市黄浦区盛泽路80弄6号</div><div class="lv1">职业：中等教育教师｜教育情况：本科｜身高：152.0</div><div class="lv1">证件签发机关：上海市公安局黄浦分局</div><div class="lv1">轨迹：上海市普陀区真如镇清涧路39弄93号501室；上海市光明中学；上海市普陀区车站新村57号104室；上海市普陀区真如镇街道铜川路2060弄45号；上海市黄浦区外滩街道盛泽路80弄6号301室</div><div class="lv1">设备：imei 866389042955823（Huawei PAR-AL00）</div><div class="lv1">地址：上海市黄浦区外滩街道西藏南路181号</div><div class="lv1">关系人1：赖少雄 350500199701225519 男/1997-01-22/28岁 福建省泉州市</div><div class="lv1">关系人2：解元红 371102197412050544 女/1974-12-05/51岁 山东省日照市东港区</div><div class="lv1">关系人3：王秀伍 342224197008270712 男/1970-08-27/55岁 安徽省宿县地区灵璧县</div><div class="lv1">关系人4：李梅 341227197703163482 女/1977-03-16/48岁 安徽省阜阳市利辛县</div><div class="lv1">关系人7：吴娟娟 430626198412252443 女/1984-12-25/41岁 湖南省岳阳市平江县</div><div class="lv1">关系人8：周磊 310104198809151250 男/1988-09-15/37岁 上海市徐汇区</div><div class="lv1">关系人9：张娴 310104198508094424 女/1985-08-09/40岁 上海市徐汇区</div><div class="lv1">关系人10：刘江锋 612322197312010817 男/1973-12-01/52岁 陕西省汉中地区城固县</div><div class="lv1">关系人11：贾玉梅 340322198102016126 女/1981-02-01/44岁 安徽省蚌埠市五河县</div></div>
-  <div class="appendix">
-    <h2>附件（案件）</h2>
-    <div class="case"><div class="alv1">*附件(案件)</div></div><div class="case"><div class="alv1">案件识别码：ws74b7e1ac002a0aa8</div><div class="alv2">案件详情：杨素兰、卢岑飞与卢海斌分家析产纠纷一审民事判决书</div><div class="alv2">启东市人民法院</div><div class="alv2">(2018)苏0681民初1902号</div><div class="alv2">分家析产纠纷</div><div class="alv2">民事</div><div class="alv2">一审</div><div class="alv2">判决书</div><div class="alv2">原告杨素兰，女，1959年5月8日生，汉族，住启东市。</div><div class="alv2">原告卢岑飞，男，1984年2月28日生，汉族，住上海市徐汇区。</div><div class="alv2">两原告共同委托代理人彭明星、倪海娟（实习），江苏路启律师事务所律师。</div><div class="alv2">被告卢海斌，男，1959年3月20日生，汉族，户籍地启东市，现住上海市。</div><div class="alv2">经审理查明，原告杨素兰与被告卢海斌原系夫妻，婚后于1984年2月28日生育原告卢岑飞。2009年10月12日，原告杨素兰与被告卢海斌经本院调解离婚，就财产分割达成如下协议：位于上海市青浦区间的住房一间中（内部已分割为南北两个半间），南半间归原告杨素兰所有，北半间归被告卢海斌所有；位于启东市的住房中，东侧一楼一底及另一独立的厨房间归原告杨素兰所有，西侧二楼二底归被告卢海斌所有。2018年3月8日，原告杨素兰、卢岑飞诉讼来院并提出上述诉请。</div><div class="alv2">另查明，原告杨素兰与被告卢海斌婚后购置了上海市鲁班路388弄6号1001室房屋（建筑面积149.49平方米）及地下车库49号车位（建筑面积29.76</div><div class="alv2">...省略1740个字符...</div><div class="alv2">查看完整信息请下载文件</div><div class="alv2">1张（在启东市房屋内）归被告卢海斌所有。</div><div class="alv2">本案受理费58350元，减半收取29175元（两原告已预交），由原告杨素兰、卢岑飞负担27670元，由被告卢海斌负担1505元。</div><div class="alv2">如不服本判决，可在判决书送达之日起十五日内，向本院递交上诉状，并按对方当事人的人数提出副本，上诉于江苏省南通市中级人民法院，同时向该院预交上诉案件受理费58350元（该院开户行：中国银行南通市濠南路支行，帐号：46×××65，户名：江苏省南通市中级人民法院）。</div><div class="alv2">审判员高梁健</div><div class="alv2">书记员黄玲玲</div><div class="alv2">2018-06-05</div><div class="alv2">江苏省</div><div class="alv2">年月：1984年02月28日</div><div class="alv2">其他：男 江苏省南通市启东市 生肖:鼠 星座:双鱼座 甲子年 正月廿七</div></div><div class="case"><div class="alv1">案件识别码：wsc4fdbc20959d140b</div><div class="alv2">案件详情：江苏省启东市人民法院</div><div class="alv2">民事判决书</div><div class="alv2">(2018)苏0681民初1902号</div><div class="alv2">原告杨素兰,女,1959年5月8日生,汉族,住启东市。</div><div class="alv2">原告卢岑飞,男,1984年2月28日生,汉族,住上海市徐汇区。</div><div class="alv2">两原告共同委托代理人彭明星、倪海娟(实习),江苏路启律师事务所律师。</div><div class="alv2">被告卢海斌,男,1959年3月20日生,汉族,户籍地启东市,现住上海市。</div><div class="alv2">原告杨素兰、卢岑飞与被告卢海斌离婚后财产、析产纠纷一案,本院于2018年3月8日立案受理后,依法由审判员高梁健适用简易程序公开开庭进行了审理。原告杨素兰及两原告的委托代理人彭明星、倪海娟、被告卢海斌到庭参加诉讼。本案现已审理终结。</div><div class="alv2">原告杨素兰、卢岑飞诉称,原告杨素兰与被告原系夫妻,原告卢岑飞与被告系父子。2009年10月12日,原告杨素兰与被告经启东市人民法院调解离婚,双方对部分财产进行了分割,但对夫妻共同财产位于上海市鲁班路388弄6号1001室的房屋,因该房屋尚有贷款未还清,且原告卢岑飞亦系该房屋的共有权人而未进行分割。2018年2月5日,双方达成书面财产分割协议,并于同月28日办理了公证手续,约定该房屋及地下车库中的5%份额归被告所有,其余95%份额归两原告所有。事后,因被告一直占有该房屋,导致两原告无法合理使用,故两原告诉讼来院,要求:1、判令上海市归两原告所有,两原告按评估价补偿被告3%份额的钱款;2、被告给付原告杨素兰存款人民币20000元;3、启东市的朝南平房一间归原告杨素兰所有;4、位于启东市房屋内的电视机1台、空调1台、冰箱1只、衣橱1张、高低床1张归被告所有;5、诉讼费用由被告承担。</div><div class="alv2">被告卢海斌辩称,1、对于上海市,双方原协议时其可以居住,但两原告</div><div class="alv2">...省略2488个字符...</div><div class="alv2">查看完整信息请下载文件</div><div class="alv2">未涉及的夫妻共同财产,人民法院应当依法予以分割。</div><div class="alv2">《最高人民法院关于适用适用问题的解释(二)》第二十条双方对夫妻共同财产中的房屋价值及归属无法达成协议时,人民法院按以下情形分别处理:</div><div class="alv2">(一)双方均主张房屋所有权并且同意竞价取得的,应当准许;</div><div class="alv2">(二)一方主张房屋所有权的,由评估机构按市场价格对房屋作出评估,取得房屋所有权的一方应当给予另一方相应的补偿;</div><div class="alv2">(三)双方均不主张房屋所有权的,根据当事人的申请拍卖房屋,就所得价款进行分割。</div><div class="alv2">《最高人民法院关于适用适用问题的解释(二)》第二十一条离婚时双方对尚未取得所有权或者尚未取得完全所有权的房屋有争议且协商不成的,人民法院不宜判决房屋所有权的归属,应当根据实际情况判决由当事人使用。</div><div class="alv2">当事人就前款规定的房屋取得完全所有权后,有争议的,可以另行向人民法院提起诉讼。</div></div><div class="case"><div class="alv1">案件识别码:ws531fc2755e218e54  执行裁定书</div><div class="alv2">(2016)沪0112执1539号之一</div><div class="alv2">申请执行人吕沈兵,男,1975年9月20日出生,汉族,住江苏省启东市。被执行人朱小川,女,1982年8月6日出生,汉族,住上海市闵行区。</div><div class="alv2">原告吕沈兵与被告朱小川民间借贷纠纷一案,本院于2015年6月23日作出的(2015)闵民一(民)初字第4005号民事判决,已经发生法律效力。</div><div class="alv2">民事判决确定:一、被告朱小川于判决生效之日起十日内返还原告吕沈兵借款30万元;二、被告朱小川于判决生效之日起十日内偿付原告吕沈兵以30万元为本金计自2013年2月7日起至实际还款之日止按月利率1.5%计算的利息。案件受理费7,420元、保全申请费2,560元,合计9,980元,由被告朱小川负担(于判决生效之日起十日内支付原告)。因义务人朱小川未能自觉履行义务,权利人吕沈兵依法向本院申请执行。2016年2月15日,本院向被执行人发出执行通知书,责令被执行人于2016年2月26日前履行民事判决确定的义务,但被执行人未能自觉履行。执行过程中,本院向上海市房地产登记处、上海市公安局交警总队车辆管理所、中国证券登记结算中心、中国人民银行上海市分行等查询被执行人房产、车辆、证券、银行账户等信息,查得被执行人与他人共有房产一处,位于上海市闵行区山花路XXX弄XXX号XXX室,已被本院查封。本院另向被执行人现工作单位上海市第八人民医院发出协助执行通知书,每月提取被执行人收入。除此之外,被执行人目前无其他财产登记信息。2016年6月21日,本院将上述执行情况告知申请执行人,并要求申请执行人提供被执行人可供执行的财产线索,但申请执行人表示不能提供。本院认为,被执行人无可供执行的财产,申请执行人亦未提供被执行人的财产线索,本案无继续执行条件。鉴于本案暂无法继续执行,本次执行程序终结。依照《中华人民共和国民事诉讼法》第二百五十七条第(六)项的规定,裁定如下:终结本院(2015)闵民一(民)初字第4005号民事判决的本次执行程序。在本次执行程序终结的情形消失后,申请执行人可以向本院申请恢复执行。本裁定送达后即发生法律效力。</div><div class="alv2">审判长何焕挺</div><div class="alv2">审判员顾红兵</div><div class="alv2">审判员徐强</div><div class="alv2">二〇一六年六月二十一日</div><div class="alv2">书记员杨泽卿</div><div class="alv2">附:相关法律条文</div></div><div class="case"><div class="alv1">案件识别码：ws459ee5869d41433f；ws9a98905d570ca13e</div><div class="alv2">关联：陶泓恺（贾为民/纪少华）｜详情请直接搜</div></div><div class="case"><div class="alv1">案件识别码</div></div>
+<iframe class="halo-bg" id="haloBg" title="HALOFLUX background" aria-hidden="true" sandbox="allow-scripts" srcdoc="&lt;!doctype html&gt;
+&lt;!--
+  HALOFLUX - Copyright (c) 2026 Ryder191 (RYDER CODE / Ms MAIKEBAIs CAT). All rights reserved.
+
+  Source code and audiovisual design are original works protected by copyright.
+  Licensed under the PolyForm Noncommercial License 1.0.0 (see LICENSE).
+  Noncommercial use only. ANY COMMERCIAL USE IS STRICTLY PROHIBITED.
+  Keep this notice and credit &quot;HALOFLUX by Ryder191&quot; when sharing or remixing.
+  Republishing on the Steam Workshop or other wallpaper platforms: credit the author
+  (Ryder191 / RYDER CODE / Ms MAIKEBAIs CAT) and the source repository (Ryder191/haloflux
+  on GitHub) in the item description; no monetization of any kind. See LICENSE.
+
+  源代码与视觉设计均为原创作品，受著作权保护。按 PolyForm Noncommercial 1.0.0 授权。
+  仅限非商业用途，严格禁止任何商业用途。转载或二创须保留本声明并注明出处。
+  转发到 Steam 创意工坊等壁纸平台：须在简介中注明作者和来源仓库（GitHub 上的 Ryder191/haloflux），
+  严禁任何形式的盈利，详见 LICENSE。
+--&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;title&gt;HALOFLUX&lt;/title&gt;
+&lt;style&gt;
+:root{
+  --bg:#08090b; --panel:#0e0f12; --line:#25282e; --line2:#3a3e46;
+  --text:#cfd2d8; --dim:#6b6f78; --faint:#3f434a; --white:#f4f5f7;
+  --pink:#f0a6c6; --teal:#98e0cf;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:ui-monospace,&quot;Cascadia Mono&quot;,&quot;SF Mono&quot;,Consolas,&quot;Liberation Mono&quot;,monospace;overflow:hidden}
+.app{display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:100vh}
+
+/* ---------- header ---------- */
+header{display:grid;grid-template-columns:minmax(240px,1.7fr) repeat(5,minmax(0,1fr));align-items:end;border-bottom:1px solid var(--line);padding:10px 18px 0;background:#0a0b0d}
+.brand h1{white-space:nowrap;margin:0;font-size:21px;font-weight:800;letter-spacing:1.5px;color:var(--white)}
+.brand p{margin:3px 0 9px;font-size:9px;color:var(--dim);letter-spacing:1.2px}
+.kpi{padding:0 10px 9px;position:relative}
+.kpi .k{font-size:9px;color:var(--dim);letter-spacing:1.2px}
+.kpi .v{font-size:14px;font-weight:800;color:var(--white);font-variant-numeric:tabular-nums}
+.kpi .v.pink{color:var(--pink)}
+.kpi .seg{position:absolute;left:10px;right:0;bottom:-1px;height:2px;background:var(--line)}
+.kpi .seg i{display:block;height:100%;background:var(--text);width:0;transition:width 1.2s ease}
+
+/* ---------- stage ---------- */
+.stage{position:relative;min-height:0;overflow:hidden}
+#stage{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stage::after{content:&quot;&quot;;position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px),
+             radial-gradient(ellipse at 40% 50%,transparent 55%,rgba(0,0,0,.55) 100%)}
+.ov{position:absolute;font-size:9px;letter-spacing:1px;color:var(--text);pointer-events:none;z-index:2}
+.chk{left:0;top:0;will-change:transform;background:rgba(8,9,11,.85);border:1px solid var(--line2);padding:5px 8px;transition:opacity .4s}
+.chk b{display:block;font-size:8px;color:var(--dim);font-weight:600;margin-bottom:3px}
+.chk span{font-size:12px;color:var(--white);font-weight:600;white-space:nowrap}
+.console{top:10px;right:14px;border:1px solid var(--line2);padding:3px 8px;background:rgba(8,9,11,.8)}
+.music{top:10px;right:104px;z-index:3;pointer-events:auto;display:flex;align-items:center;gap:6px;border:1px solid var(--line2);padding:2px 8px;background:rgba(8,9,11,.8);user-select:none}
+.music .mbtn{cursor:pointer;display:flex;align-items:center;gap:5px}
+.music:hover{border-color:#cfd2d8}
+.music .mbtn:hover em{color:#fff}
+.music em{font-style:normal;white-space:nowrap}
+.music.on em{color:var(--white)}
+.music.wait em{animation:bl 1s steps(1) infinite}
+.music .eq{display:inline-flex;align-items:flex-end;gap:1px;height:8px}
+.music .eq b{display:block;width:2px;height:2px;background:var(--dim)}
+.music.on .eq b{background:var(--white);animation:eqb .9s ease-in-out infinite}
+.music.on .eq b:nth-child(2){animation-delay:-.3s}
+.music.on .eq b:nth-child(3){animation-delay:-.6s}
+@keyframes eqb{0%,100%{height:2px}50%{height:8px}}
+.music input[type=range]{width:70px;height:10px;margin:0;accent-color:#cfd2d8;cursor:pointer}
+.music .mval{width:16px;text-align:right;color:var(--dim);font-variant-numeric:tabular-nums}
+.status{right:16px;bottom:12px;text-align:right}
+.status .big{font-size:11px;color:var(--white);font-weight:800}
+.status .sm{color:var(--dim);font-size:8px;margin-top:2px}
+
+/* ---------- panels ---------- */
+.panels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:8px 12px 12px;border-top:1px solid var(--line);background:#0a0b0d}
+.p{border:1px solid var(--line);background:var(--panel);padding:7px 10px 6px;height:clamp(118px,17vh,168px);display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.p h3{margin:0 0 5px;font-size:9px;font-weight:800;letter-spacing:1.3px;color:var(--white);white-space:nowrap}
+.p .cap{margin-top:auto;font-size:8px;color:var(--dim);padding-top:3px;white-space:nowrap;overflow:hidden}
+.p canvas{width:100%;flex:1;min-height:0;display:block}
+
+.feed{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;font-size:9px;line-height:1.4;overflow:hidden}
+.feed div{white-space:nowrap;color:var(--dim)}
+.feed div:last-child{color:var(--white);font-weight:600}
+.n{color:var(--faint);margin-right:8px}
+.vb{display:inline-block;width:42px;font-weight:800}
+.vb.build{color:var(--pink)} .vb.check{color:var(--text)} .vb.read{color:var(--teal)} .vb.qa{color:var(--white)}
+
+.btns{display:flex;gap:4px;margin-top:4px}
+.btns span{flex:1;font-size:8px;border:1px solid var(--line2);padding:1px 5px;color:var(--dim);transition:all .3s}
+.btns span.on{background:#cfd2d8;color:#000;border-color:#cfd2d8}
+
+.code{flex:1;min-height:0;font-size:9px;line-height:1.45;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.code div{white-space:nowrap}
+.code .ln{color:var(--faint);margin-right:10px}
+.code .fn{color:var(--white);font-weight:800}
+.code .op{color:var(--dim)}
+.caret{display:inline-block;width:6px;height:10px;background:var(--white);vertical-align:-1px;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+
+.routes{display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:3px 6px;font-size:8px;align-content:start}
+.routes .h{color:var(--dim);font-weight:800;letter-spacing:1px}
+.routes .nm{color:var(--text);white-space:nowrap;overflow:hidden}
+.chip{display:inline-block;padding:0 4px;border:1px solid var(--line2);border-radius:2px;color:var(--faint);line-height:11px;transition:all .3s}
+.chip.on{background:#d6d8dd;color:#000;border-color:#d6d8dd}
+.chip.done{background:#2b2e34;color:var(--text);border-color:#2b2e34}
+.chip.pk{background:rgba(240,166,198,.25);color:var(--pink);border-color:rgba(240,166,198,.5)}
+
+.agents{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;font-size:8px;align-content:start}
+.ag{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.ag .id{color:var(--faint)} .ag .rl{width:36px;color:var(--text);font-weight:600}
+.ag .cells{display:flex;gap:1px}
+.ag .cells i{width:7px;height:7px;background:#1d1f24}
+.ag .st{color:var(--dim);overflow:hidden}
+.ag .st.w{color:var(--white)}
+
+@media (max-width:1000px){
+  html,body{overflow:auto}
+  .app{height:auto}
+  .stage{height:62vh}
+  header{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 0}
+  .brand{grid-column:1/-1}
+  .panels{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .p{height:150px}
+}
+@media (max-width:520px){
+  header{padding:10px 16px 0}
+  .panels{grid-template-columns:minmax(0,1fr);padding:8px 16px 16px}
+}
+&lt;/style&gt;
+&lt;style&gt;
+/* ---- wallpaper build ---- */
+html,body,.stage,.p{cursor:none}
+@media (min-width:1500px){ .brand h1{font-size:24px} .p h3{font-size:10px} .p .cap{font-size:8.5px} }
+@media (min-width:2100px){ .brand h1{font-size:28px;letter-spacing:2.5px} .kpi .v{font-size:17px}
+  .p{height:clamp(150px,19vh,230px)} }
+&lt;/style&gt;
+
+&lt;style id=&quot;haloflux-background-mode&quot;&gt;
+/* Modified copy: background-only embed (HUD hidden, stage full-screen, silent audio).
+   HALOFLUX (c) 2026 Ryder191 (RYDER CODE / Ms MAIKEBAIs CAT) - PolyForm Noncommercial 1.0.0.
+   https://github.com/Ryder191/haloflux -- Noncommercial use only. */
+html,body{background:#04060a!important;overflow:hidden!important;margin:0!important;}
+.app{display:block!important;height:100vh!important;background:transparent!important;}
+header,footer,.ov{display:none!important;}
+.panels{position:fixed!important;left:-300vw!important;top:0!important;width:1400px!important;height:620px!important;opacity:0!important;pointer-events:none!important;}
+.stage{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;min-height:0!important;overflow:hidden!important;}
+#stage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class=&quot;app&quot;&gt;
+  &lt;header&gt;
+    &lt;div class=&quot;brand&quot;&gt;&lt;h1&gt;RYDER CODE / Ms MAIKEBAIs CAT&lt;/h1&gt;&lt;p&gt;RESEARCH PAPERS → REPRODUCIBLE EXPERIMENTS&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;kpi&quot;&gt;&lt;div class=&quot;k&quot;&gt;PAPERS&lt;/div&gt;&lt;div class=&quot;v&quot; id=&quot;k0&quot;&gt;64&lt;/div&gt;&lt;div class=&quot;seg&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;kpi&quot;&gt;&lt;div class=&quot;k&quot;&gt;AGENTS&lt;/div&gt;&lt;div class=&quot;v pink&quot; id=&quot;k1&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;seg&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;kpi&quot;&gt;&lt;div class=&quot;k&quot;&gt;METHODS&lt;/div&gt;&lt;div class=&quot;v&quot; id=&quot;k2&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;seg&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;kpi&quot;&gt;&lt;div class=&quot;k&quot;&gt;REF. SCENES&lt;/div&gt;&lt;div class=&quot;v&quot; id=&quot;k3&quot;&gt;28&lt;/div&gt;&lt;div class=&quot;seg&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;kpi&quot;&gt;&lt;div class=&quot;k&quot;&gt;FURTHER REVIEW&lt;/div&gt;&lt;div class=&quot;v&quot; id=&quot;k4&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;seg&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class=&quot;stage&quot; id=&quot;stageWrap&quot;&gt;
+    &lt;canvas id=&quot;stage&quot;&gt;&lt;/canvas&gt;
+    &lt;audio id=&quot;bgmAudio&quot; data-src=&quot;data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACABAAZGF0YQAAAAA=&quot; loop preload=&quot;auto&quot; playsinline&gt;&lt;/audio&gt;
+    &lt;div class=&quot;ov chk&quot; id=&quot;chk&quot;&gt;&lt;b id=&quot;chkK&quot;&gt;STABILITY CHECK&lt;/b&gt;&lt;span id=&quot;chkV&quot;&gt;CFL = |u| Δt / Δx&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;ov status&quot;&gt;&lt;div class=&quot;big&quot; id=&quot;stBig&quot;&gt;7 / 11 METHODS · 4 PENDING&lt;/div&gt;&lt;div class=&quot;sm&quot;&gt;independent runs · shared event bus&lt;/div&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;section class=&quot;panels&quot;&gt;
+    &lt;div class=&quot;p&quot;&gt;&lt;h3&gt;INVESTIGATION FEED&lt;/h3&gt;&lt;div class=&quot;feed&quot; id=&quot;feed&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;p&quot;&gt;&lt;h3&gt;ADVECTION / PARTICLE SOLVER&lt;/h3&gt;&lt;canvas id=&quot;cAdv&quot;&gt;&lt;/canvas&gt;
+      &lt;div class=&quot;btns&quot; id=&quot;advBtns&quot;&gt;&lt;span class=&quot;on&quot;&gt;ADVECT&lt;/span&gt;&lt;span&gt;PROJECT&lt;/span&gt;&lt;span&gt;RENDER&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;p&quot;&gt;&lt;h3&gt;METHOD WORKSPACE&lt;/h3&gt;&lt;div class=&quot;code&quot; id=&quot;code&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;p&quot;&gt;&lt;h3&gt;SHARED SCENE / DIFFERENCE FIELD&lt;/h3&gt;&lt;canvas id=&quot;cDiff&quot;&gt;&lt;/canvas&gt;&lt;div class=&quot;cap&quot;&gt;same input · local difference · inspect source&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;p&quot;&gt;&lt;h3&gt;SOURCE / EXTRACTION ROUTES&lt;/h3&gt;&lt;div class=&quot;routes&quot; id=&quot;routes&quot;&gt;&lt;/div&gt;&lt;div class=&quot;cap&quot;&gt;pages → equations → runnable source&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;p&quot;&gt;&lt;h3&gt;VALIDATION / SAMPLE BUFFER&lt;/h3&gt;&lt;canvas id=&quot;cVal&quot;&gt;&lt;/canvas&gt;&lt;div class=&quot;cap&quot;&gt;illustrative / source check required&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;p&quot;&gt;&lt;h3&gt;12 AGENTS / DISPATCH&lt;/h3&gt;&lt;div class=&quot;agents&quot; id=&quot;agents&quot;&gt;&lt;/div&gt;&lt;div class=&quot;cap&quot;&gt;independent jobs / shared event bus&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;p&quot;&gt;&lt;h3&gt;METHOD / REFERENCE INDEX&lt;/h3&gt;&lt;canvas id=&quot;cIdx&quot;&gt;&lt;/canvas&gt;&lt;div class=&quot;cap&quot;&gt;28 scenes / 7 matched / 4 further review&lt;/div&gt;&lt;/div&gt;
+  &lt;/section&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+const TAU = Math.PI * 2, rnd = Math.random;
+const rr = (a, b) =&gt; a + rnd() * (b - a);
+const pick = a =&gt; a[(rnd() * a.length) | 0];
+const gauss = () =&gt; (rnd() + rnd() + rnd() - 1.5) / 1.5;
+let DPR = Math.min(window.devicePixelRatio || 1, 2);
+const FONT = &#x27;ui-monospace,&quot;Cascadia Mono&quot;,&quot;SF Mono&quot;,Consolas,&quot;Liberation Mono&quot;,monospace&#x27;;
+
+function mk(w, h) {
+  const c = document.createElement(&#x27;canvas&#x27;);
+  c.width = Math.max(1, Math.ceil(w * DPR)); c.height = Math.max(1, Math.ceil(h * DPR));
+  c.x = c.getContext(&#x27;2d&#x27;); c.x.setTransform(DPR, 0, 0, DPR, 0, 0);
+  return c;
+}
+function fit(c) {
+  const r = c.getBoundingClientRect();
+  c.width = Math.max(1, Math.round(r.width * DPR)); c.height = Math.max(1, Math.round(r.height * DPR));
+  const x = c.getContext(&#x27;2d&#x27;); x.setTransform(DPR, 0, 0, DPR, 0, 0);
+  c.w = r.width; c.h = r.height; c.x = x;
+  return c;
+}
+
+/* =========================================================
+   MAIN STAGE
+   ========================================================= */
+const stage = document.getElementById(&#x27;stage&#x27;); let S = stage.getContext(&#x27;2d&#x27;); const S_MAIN = S;
+let W, H, cx, cy, R, RO, RMAX, thV, thS;
+let webBase, webLayers = [], layerEnv = [0, 0, 0], trailC, glowC, laneC;
+let curves = [], runners = [], comets = [], cards = [], wedges = [], pulses = [];
+let webRot = 0, ringRot = 0, ringVel = 0, OSTEP = 0.0038;
+const GS = 3; // glow buffer downscale
+const FS = 0.5; let farC; // far-layer buffer (depth of field)
+const HAS_FILTER = &#x27;filter&#x27; in S;
+const easeIO = t =&gt; t &lt; 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const easeO = t =&gt; 1 - Math.pow(1 - t, 3);
+
+/* ---------- live configuration (driven by the console) ---------- */
+// [key, label, min, max, step, group, rebuild]
+const PARAMS = [
+  [&#x27;tempo&#x27;, &#x27;整体节拍速度&#x27;, 0.4, 2.5, 0.05, &#x27;全局&#x27;],
+  [&#x27;camera&#x27;, &#x27;自动运镜 (0关 1开)&#x27;, 0, 1, 1, &#x27;全局&#x27;],
+  [&#x27;camZoom&#x27;, &#x27;运镜推近幅度&#x27;, 0, 2, 0.05, &#x27;全局&#x27;],
+  [&#x27;glow&#x27;, &#x27;柔光层强度&#x27;, 0, 1.5, 0.05, &#x27;全局&#x27;],
+  [&#x27;scan&#x27;, &#x27;扫描线 (0关 1开)&#x27;, 0, 1, 1, &#x27;全局&#x27;],
+
+  [&#x27;ringSpeed&#x27;, &#x27;圆环转动幅度/速度&#x27;, 0, 3, 0.05, &#x27;圆环&#x27;],
+  [&#x27;ringPause&#x27;, &#x27;圆环停顿时长&#x27;, 0, 3, 0.05, &#x27;圆环&#x27;],
+  [&#x27;ringWidth&#x27;, &#x27;环带厚度&#x27;, 0.6, 1.6, 0.02, &#x27;圆环&#x27;, &#x27;resize&#x27;],
+  [&#x27;rimBright&#x27;, &#x27;内外缘细线亮度&#x27;, 0, 2, 0.05, &#x27;圆环&#x27;],
+  [&#x27;rimWidth&#x27;, &#x27;内外缘细线带宽度&#x27;, 0.3, 2.5, 0.05, &#x27;圆环&#x27;, &#x27;slots&#x27;],
+  [&#x27;dataFlicker&#x27;, &#x27;数据块刷新/闪烁&#x27;, 0, 4, 0.1, &#x27;圆环&#x27;],
+
+  [&#x27;webBright&#x27;, &#x27;底层网线亮度&#x27;, 0.1, 3, 0.05, &#x27;圈内&#x27;, &#x27;web&#x27;],
+  [&#x27;webPulseBase&#x27;, &#x27;网线闪烁层基础亮度&#x27;, 0, 1, 0.02, &#x27;圈内&#x27;],
+  [&#x27;webPulseAmp&#x27;, &#x27;网线闪烁层节拍亮度&#x27;, 0, 1, 0.02, &#x27;圈内&#x27;],
+  [&#x27;webSpin&#x27;, &#x27;网线整体转速&#x27;, 0, 5, 0.1, &#x27;圈内&#x27;],
+  [&#x27;runnerCount&#x27;, &#x27;单独亮线 数量&#x27;, 0, 900, 1, &#x27;圈内&#x27;],
+  [&#x27;runnerBright&#x27;, &#x27;单独亮线 亮度&#x27;, 0, 2, 0.05, &#x27;圈内&#x27;],
+  [&#x27;runnerWidth&#x27;, &#x27;单独亮线 粗细&#x27;, 0.3, 3, 0.05, &#x27;圈内&#x27;],
+  [&#x27;runnerSpeed&#x27;, &#x27;单独亮线 速度&#x27;, 0.1, 4, 0.05, &#x27;圈内&#x27;],
+  [&#x27;runnerVariety&#x27;, &#x27;单独亮线 速度差异&#x27;, 0, 1, 0.05, &#x27;圈内&#x27;],
+  [&#x27;cometPerBeat&#x27;, &#x27;成组光束 每拍数量&#x27;, 0, 6, 0.1, &#x27;圈内&#x27;],
+  [&#x27;cometBurst&#x27;, &#x27;成组光束 重拍爆发数&#x27;, 0, 12, 0.5, &#x27;圈内&#x27;],
+  [&#x27;cometTrickle&#x27;, &#x27;成组光束 拍间零星(每秒)&#x27;, 0, 6, 0.1, &#x27;圈内&#x27;],
+  [&#x27;cometLines&#x27;, &#x27;成组光束 每组线数&#x27;, 0.3, 3, 0.05, &#x27;圈内&#x27;],
+  [&#x27;cometWidth&#x27;, &#x27;成组光束 宽度&#x27;, 0.3, 3, 0.05, &#x27;圈内&#x27;],
+  [&#x27;cometBright&#x27;, &#x27;成组光束 亮度&#x27;, 0.1, 2.5, 0.05, &#x27;圈内&#x27;],
+  [&#x27;cometGlow&#x27;, &#x27;成组光束 柔光&#x27;, 0, 3, 0.05, &#x27;圈内&#x27;],
+  [&#x27;cometSpeed&#x27;, &#x27;成组光束 速度&#x27;, 0.3, 3, 0.05, &#x27;圈内&#x27;],
+  [&#x27;cometFollow&#x27;, &#x27;成组光束 跟随圆环 (0/1)&#x27;, 0, 1, 1, &#x27;圈内&#x27;],
+
+  [&#x27;beamBright&#x27;, &#x27;伸缩光束 亮度&#x27;, 0, 2.5, 0.05, &#x27;环外&#x27;],
+  [&#x27;beamLen&#x27;, &#x27;伸缩光束 长度&#x27;, 0.2, 1.8, 0.05, &#x27;环外&#x27;],
+  [&#x27;beamWidth&#x27;, &#x27;伸缩光束 线粗细&#x27;, 0.3, 3, 0.05, &#x27;环外&#x27;],
+  [&#x27;beamBounce&#x27;, &#x27;回弹波浪层 强度&#x27;, 0, 2, 0.05, &#x27;环外&#x27;],
+  [&#x27;beamGlow&#x27;, &#x27;伸缩光束 柔光&#x27;, 0, 6, 0.1, &#x27;环外&#x27;],
+  [&#x27;dashBright&#x27;, &#x27;流动短线 亮度&#x27;, 0, 2, 0.05, &#x27;环外&#x27;],
+  [&#x27;hazeCount&#x27;, &#x27;宽光带 数量&#x27;, 0, 30, 1, &#x27;环外&#x27;],
+  [&#x27;hazeBright&#x27;, &#x27;宽光带 亮度&#x27;, 0, 3, 0.05, &#x27;环外&#x27;],
+  [&#x27;flyerCount&#x27;, &#x27;飞出流线(单独) 数量&#x27;, 0, 3, 0.05, &#x27;环外&#x27;, &#x27;flyers&#x27;],
+  [&#x27;flyerBright&#x27;, &#x27;飞出流线(单独) 亮度&#x27;, 0, 3, 0.05, &#x27;环外&#x27;],
+  [&#x27;flyerWidth&#x27;, &#x27;飞出流线 粗细&#x27;, 0.3, 3, 0.05, &#x27;环外&#x27;],
+  [&#x27;flyerSpeed&#x27;, &#x27;飞出流线 速度&#x27;, 0.2, 3, 0.05, &#x27;环外&#x27;],
+  [&#x27;burstRate&#x27;, &#x27;飞出流线(成组) 频率&#x27;, 0, 5, 0.1, &#x27;环外&#x27;],
+  [&#x27;burstSize&#x27;, &#x27;飞出流线(成组) 每组数量&#x27;, 0.2, 3, 0.05, &#x27;环外&#x27;],
+  [&#x27;burstBright&#x27;, &#x27;飞出流线(成组) 亮度&#x27;, 0, 2.5, 0.05, &#x27;环外&#x27;],
+  [&#x27;flareRate&#x27;, &#x27;根部闪光 频率&#x27;, 0, 5, 0.1, &#x27;环外&#x27;],
+  [&#x27;flareBright&#x27;, &#x27;根部闪光 亮度&#x27;, 0, 2, 0.05, &#x27;环外&#x27;],
+  [&#x27;rimDensity&#x27;, &#x27;内外缘细线 密度&#x27;, 0.3, 3, 0.05, &#x27;圆环&#x27;],
+  [&#x27;depthBlur&#x27;, &#x27;远景虚化 (环外远层)&#x27;, 0, 5, 0.1, &#x27;空间层次&#x27;],
+  [&#x27;depthDim&#x27;, &#x27;远景亮度&#x27;, 0, 1.5, 0.05, &#x27;空间层次&#x27;],
+  [&#x27;webBlur&#x27;, &#x27;圈内底层虚化&#x27;, 0, 4, 0.1, &#x27;空间层次&#x27;, &#x27;web&#x27;],
+  [&#x27;parallax&#x27;, &#x27;视差 (运镜时远近错位)&#x27;, 0, 1.5, 0.05, &#x27;空间层次&#x27;],
+  [&#x27;bokeh&#x27;, &#x27;前景光斑 数量&#x27;, 0, 80, 1, &#x27;空间层次&#x27;],
+  [&#x27;bokehBright&#x27;, &#x27;前景光斑 亮度&#x27;, 0, 3, 0.05, &#x27;空间层次&#x27;],
+  [&#x27;atmos&#x27;, &#x27;空间雾气&#x27;, 0, 3, 0.05, &#x27;空间层次&#x27;],
+  [&#x27;ringShadow&#x27;, &#x27;圆环遮挡阴影&#x27;, 0, 2, 0.05, &#x27;空间层次&#x27;],
+  [&#x27;vignette&#x27;, &#x27;暗角&#x27;, 0, 1.5, 0.05, &#x27;空间层次&#x27;],
+];
+const BASE = {
+  tempo: 1, camera: 1, camZoom: 1, glow: 1, scan: 1,
+  ringSpeed: 1, ringPause: 1, ringWidth: 1, rimBright: 1, rimWidth: 1, dataFlicker: 1,
+  webBright: 1, webPulseBase: 0.15, webPulseAmp: 0.85, webSpin: 1,
+  runnerCount: 336, runnerBright: 1, runnerWidth: 1, runnerSpeed: 1, runnerVariety: 1,
+  cometPerBeat: 1.1, cometBurst: 4, cometTrickle: 0, cometLines: 1, cometWidth: 1, cometBright: 1, cometGlow: 1.1, cometSpeed: 1, cometFollow: 0,
+  beamBright: 1, beamBounce: 1, beamLen: 1, beamWidth: 1, beamGlow: 1, dashBright: 1, hazeCount: 8, hazeBright: 1,
+  flyerCount: 1, flyerBright: 1, flyerWidth: 1, flyerSpeed: 1, burstRate: 1, burstSize: 1, burstBright: 1, flareRate: 1, flareBright: 1,
+  rimDensity: 1, depthBlur: 1.4, depthDim: 0.9, webBlur: 0.7, parallax: 0.6, bokeh: 16, bokehBright: 1, atmos: 1, ringShadow: 1, vignette: 0.7,
+};
+const PRESETS = {
+  A: { ...BASE, webBright: 1.25, webPulseBase: 0.3, webPulseAmp: 0.4, runnerCount: 45, runnerVariety: 0,
+       cometPerBeat: 2.5, cometBurst: 5, cometTrickle: 1.6, cometFollow: 1, cometGlow: 0.85 },
+  B: { ...BASE },
+};
+// 你的默认效果：把控制台「导出」的 values 粘贴进来替换 null，发给任何电脑打开都会默认使用它
+const BAKED_MINE = {tempo:1.2, camera:0, camZoom:0, glow:0.8, scan:1, ringSpeed:0.6, ringPause:1.6, ringWidth:1.1, rimBright:0.9, rimWidth:1.1, dataFlicker:0.7, webBright:0.55, webPulseBase:0.06, webPulseAmp:0.3, webSpin:0.4, runnerCount:170, runnerBright:0.4, runnerWidth:1, runnerSpeed:0.5, runnerVariety:0.3, cometPerBeat:1.2, cometBurst:3, cometTrickle:1, cometLines:1, cometWidth:1, cometBright:0.55, cometGlow:0.6, cometSpeed:0.8, cometFollow:1, beamBright:0.55, beamLen:1.1, beamWidth:0.8, beamBounce:0.8, beamGlow:1.1, dashBright:0.55, hazeCount:10, hazeBright:0.55, flyerCount:1, flyerBright:0.7, flyerWidth:1, flyerSpeed:1, burstRate:1.8, burstSize:1.4, burstBright:0.7, flareRate:1.8, flareBright:0.7, rimDensity:1, depthBlur:0.5, depthDim:0.4, webBlur:0.4, parallax:0, bokeh:6, bokehBright:0.4, atmos:0.7, ringShadow:0.8, vignette:0};   /* 背景模式定制：固定机位、降亮降密 */
+if (BAKED_MINE) PRESETS.MINE = { ...BASE, ...BAKED_MINE };
+const C = { ...(PRESETS.MINE || PRESETS.B) };
+const zf = z =&gt; 1 + (z - 1) * C.camZoom;
+
+const TOK = [&#x27;load_collection()&#x27;, &#x27;extract_eq&#x27;, &#x27;∂u/∂t&#x27;, &#x27;rho&#x27;, &#x27;grad(p)&#x27;, &#x27;dt=1e-3&#x27;, &#x27;assert&#x27;, &#x27;residual&#x27;, &#x27;solve()&#x27;,
+  &#x27;mesh&#x27;, &#x27;bc.apply&#x27;, &#x27;flux&#x27;, &#x27;CFL&#x27;, &#x27;0.0041&#x27;, &#x27;ok&#x27;, &#x27;PASS&#x27;, &#x27;ref#12&#x27;, &#x27;scene_07&#x27;, &#x27;u_star&#x27;, &#x27;div(u)&#x27;, &#x27;proj&#x27;, &#x27;advect&#x27;,
+  &#x27;step++&#x27;, &#x27;tol&#x27;, &#x27;1.2e-6&#x27;, &#x27;kernel&#x27;, &#x27;paper[37]&#x27;, &#x27;eq.(4)&#x27;, &#x27;fig.3&#x27;, &#x27;table2&#x27;, &#x27;nu=0.01&#x27;, &#x27;v_x&#x27;, &#x27;omega&#x27;, &#x27;bounce&#x27;,
+  &#x27;f_eq&#x27;, &#x27;stream&#x27;, &#x27;collide&#x27;, &#x27;Re=100&#x27;, &#x27;check&#x27;, &#x27;&gt;&gt;&gt;&#x27;, &#x27;match&#x27;, &#x27;diff&#x27;, &#x27;L2&#x27;, &#x27;grid64&#x27;, &#x27;cfg&#x27;, &#x27;seed=7&#x27;];
+
+/* ---------- rhythm: an uneven beat clock drives everything ---------- */
+const PATTERN = [0.5, 0.25, 0.25, 0.5, 0.5, 0.75, 0.25, 0.25, 0.25, 1.0];
+let beatT = 0.4, beatI = 0, sinceBeat = 9, beatN = 0, env = 0;
+function updateBeat(dt) {
+  beatT -= dt; sinceBeat += dt;
+  if (beatT &lt;= 0) { beatT += PATTERN[beatI++ % PATTERN.length] * 0.92 / C.tempo; sinceBeat = 0; beatN++; onBeat(); }
+  env = Math.exp(-sinceBeat * 4.5);
+}
+function onBeat() {
+  // ring: kick every other beat → stepped, fast rotation
+  if (rot.t &gt;= rot.dur &amp;&amp; rot.hold &lt;= 0) ringMove();
+  // comets come in bursts
+  const n = Math.round((beatN % 4 === 0 ? C.cometBurst : C.cometPerBeat) * rr(0.6, 1.4));
+  for (let i = 0; i &lt; n; i++) setTimeout(spawnComet, i * rr(30, 90));
+  // web layers shimmer
+  layerEnv[(rnd() * 3) | 0] = 1;
+  if (beatN % 4 === 0) layerEnv = layerEnv.map(() =&gt; rr(0.6, 1));
+  // outer: travelling wave + random wedge hits
+  const dir = rnd() &lt; 0.5 ? 1 : -1, big = beatN % 8 === 0;
+  pulses.push({ c: dir &gt; 0 ? -thS - 0.15 : thS + 0.15, v: dir * rr(0.7, 1.6) * (big ? 0.7 : 1), w: big ? rr(0.25, 0.4) : rr(0.05, 0.16), amp: big ? 1 : rr(0.45, 0.9), life: rr(1.2, 2.0), L: 0 });
+  pulses.forEach(p =&gt; p.L || (p.L = p.life));
+  onBeatOuter();
+  // ring cards
+  for (let i = 0; i &lt; Math.round(6 * C.dataFlicker); i++) pick(slots).c = null;
+  for (let i = 0; i &lt; Math.round(2 * C.dataFlicker); i++) pick(slots).flash = rr(0.35, 0.7);
+}
+
+/* ---------- camera: automatic push-in / pull-out shots ---------- */
+const cam = { x: 0, y: 0, z: 1 };
+let shots = [], shotI = 0, shotT = 0, camPhase = &#x27;hold&#x27;, camFrom = null;
+function buildShots() {
+  const P = (a, r) =&gt; ({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
+  const mid = (R + RO) / 2;
+  shots = [
+    { x: W / 2, y: H / 2, z: 1, hold: 4.5 },
+    { ...P(-thS * 0.45, mid), z: 2.3, hold: 3.4 },
+    { ...P(0.04, RO + (RMAX - RO) * 0.3), z: 1.6, hold: 3.2 },
+    { x: W / 2, y: H / 2, z: 1, hold: 3.0 },
+    { ...P(0.22, R * 0.8), z: 1.9, hold: 3.4 },
+    { ...P(thS * 0.5, mid + 10), z: 2.8, hold: 3.0 },
+    { ...P(-0.12, RO + 40), z: 1.35, hold: 3.2 },
+  ];
+  shotI = 0; shotT = 0; camPhase = &#x27;hold&#x27;;
+  Object.assign(cam, shots[0]);
+}
+function clampCam() {
+  const hw = W / (2 * cam.z), hh = H / (2 * cam.z);
+  cam.x = Math.max(hw, Math.min(W - hw, cam.x));
+  cam.y = Math.max(hh, Math.min(H - hh, cam.y));
+}
+function updateCam(dt) {
+  if (!C.camera) { cam.x = W / 2; cam.y = H / 2; cam.z = 1; return; }
+  shotT += dt;
+  const cur = shots[shotI], nxt = shots[(shotI + 1) % shots.length];
+  if (camPhase === &#x27;hold&#x27;) {
+    const k = shotT / cur.hold;
+    cam.x = cur.x; cam.y = cur.y + (cur.z &gt; 1 ? Math.sin(k * Math.PI) * 6 : 0);
+    cam.z = zf(cur.z) * (1 + 0.05 * k * C.camZoom);            // slow creep while holding
+    if (shotT &gt;= cur.hold) { camPhase = &#x27;move&#x27;; shotT = 0; camFrom = { ...cam }; }
+  } else {
+    const dur = 2.2, e = easeIO(Math.min(1, shotT / dur));
+    const lz = Math.log(camFrom.z) + (Math.log(zf(nxt.z)) - Math.log(camFrom.z)) * e;
+    let z = Math.exp(lz);
+    if (camFrom.z &gt; 1.2 &amp;&amp; zf(nxt.z) &gt; 1.2) z *= 1 - 0.4 * Math.sin(Math.PI * e); // pull out between two close-ups
+    cam.z = Math.max(1, z);
+    cam.x = camFrom.x + (nxt.x - camFrom.x) * e;
+    cam.y = camFrom.y + (nxt.y - camFrom.y) * e;
+    if (shotT &gt;= dur) { shotI = (shotI + 1) % shots.length; camPhase = &#x27;hold&#x27;; shotT = 0; }
+  }
+  clampCam();
+}
+function camT(ctx, d) { ctx.setTransform(d * cam.z, 0, 0, d * cam.z, d * (W / 2 - cam.x * cam.z), d * (H / 2 - cam.y * cam.z)); }
+function camTk(ctx, d, k) {
+  const z = 1 + (cam.z - 1) * k, x = W / 2 + (cam.x - W / 2) * k, y = H / 2 + (cam.y - H / 2) * k;
+  ctx.setTransform(d * z, 0, 0, d * z, d * (W / 2 - x * z), d * (H / 2 - y * z));
+}
+const toScreen = (x, y) =&gt; ({ x: (x - cam.x) * cam.z + W / 2, y: (y - cam.y) * cam.z + H / 2 });
+
+/* ---------- setup ---------- */
+function mkd(w, h, d) {
+  const c = document.createElement(&#x27;canvas&#x27;);
+  c.width = Math.max(1, Math.ceil(w * d)); c.height = Math.max(1, Math.ceil(h * d));
+  c.x = c.getContext(&#x27;2d&#x27;); c.x.setTransform(d, 0, 0, d, 0, 0); return c;
+}
+function resizeStage() {
+  const r = stage.getBoundingClientRect();
+  W = r.width; H = r.height;
+  stage.width = W * DPR; stage.height = H * DPR;
+  cx = W * 0.07; cy = H * 0.5;
+  R = Math.max(H * 0.78, W * 0.30);
+  RO = R + Math.max(90, Math.min(240, H * 0.3, W * 0.13)) * C.ringWidth;
+  RMAX = Math.hypot(W - cx, H / 2) + 60;
+  thV = Math.asin(Math.min(1, (H / 2 + 60) / R));
+  thS = Math.asin(Math.min(1, (H / 2 + 40) / RO));
+  buildWeb(); buildLanes(); buildCards(); buildOuter();
+  trailC = mkd(2 * R + 4, 2 * R + 4, Math.min(DPR, 1.5));
+  farC = document.createElement(&#x27;canvas&#x27;); farC.width = Math.ceil(W * FS); farC.height = Math.ceil(H * FS); farC.x = farC.getContext(&#x27;2d&#x27;);
+  glowC = document.createElement(&#x27;canvas&#x27;);
+  glowC.width = Math.ceil(W / GS); glowC.height = Math.ceil(H / GS); glowC.x = glowC.getContext(&#x27;2d&#x27;);
+  runners = []; for (let i = 0; i &lt; C.runnerCount; i++) runners.push(newRunner(true));
+  comets = []; pulses = [];
+  buildShots();
+}
+
+/* ---------- inner web ---------- */
+function buildWeb() {
+  const size = 2 * R + 4, d = Math.min(DPR, 1.5);
+  webBase = mkd(size, size, d);
+  webLayers = [0, 1, 2].map(() =&gt; mkd(size, size, d));
+  const all = [webBase, ...webLayers];
+  all.forEach(c =&gt; c.x.translate(R + 2, R + 2));
+  const b = webBase.x;
+  b.beginPath(); b.arc(0, 0, R, 0, TAU);
+  const g = b.createRadialGradient(0, 0, R * 0.2, 0, 0, R);
+  g.addColorStop(0, &#x27;#111215&#x27;); g.addColorStop(1, &#x27;#0c0d0f&#x27;);
+  b.fillStyle = g; b.fill();
+  all.forEach(c =&gt; { c.x.save(); c.x.beginPath(); c.x.arc(0, 0, R, 0, TAU); c.x.clip(); });
+  curves = [];
+  const N = Math.min(2600, Math.round(1000 + (W * H) / 800));
+  for (let i = 0; i &lt; N; i++) {
+    const a1 = rnd() * TAU, a2 = a1 + rr(0.6, Math.PI * 1.4);
+    const p0 = { x: Math.cos(a1) * R, y: Math.sin(a1) * R };
+    const p1 = { x: Math.cos(a2) * R, y: Math.sin(a2) * R };
+    const cr = Math.sqrt(rnd()) * R * 0.9, ca = rnd() * TAU;
+    const c = { x: Math.cos(ca) * cr, y: Math.sin(ca) * cr };
+    curves.push({ p0, c, p1 });
+    const layer = rnd() &lt; 0.7 ? -1 : (rnd() * 3) | 0;
+    const x = layer &lt; 0 ? b : webLayers[layer].x;
+    const al = Math.min(1, (layer &lt; 0 ? 0.03 + Math.pow(rnd(), 3) * 0.28 : 0.08 + Math.pow(rnd(), 2) * 0.35) * C.webBright);
+    const k = rnd();
+    x.strokeStyle = k &lt; 0.05 ? `rgba(240,166,198,${al})` : k &lt; 0.1 ? `rgba(180,170,235,${al})` : `rgba(228,231,238,${al})`;
+    x.lineWidth = rr(0.4, 1.1);
+    x.beginPath(); x.moveTo(p0.x, p0.y); x.quadraticCurveTo(c.x, c.y, p1.x, p1.y); x.stroke();
+  }
+  // node markers
+  b.font = `6px ${FONT}`; b.textBaseline = &#x27;middle&#x27;;
+  for (let i = 0; i &lt; 70; i++) {
+    const rr_ = Math.sqrt(rnd()) * R * 0.92, a = rnd() * TAU;
+    const px = Math.cos(a) * rr_, py = Math.sin(a) * rr_, s = rr(2, 4.5);
+    b.strokeStyle = `rgba(235,238,244,${rr(0.35, 0.8)})`; b.lineWidth = 0.8;
+    b.beginPath(); b.arc(px, py, s, 0, TAU); b.stroke();
+    if (rnd() &lt; 0.4) { b.beginPath(); b.arc(px + s * 2.2, py, s * 0.8, 0, TAU); b.stroke(); }
+    if (rnd() &lt; 0.35) { b.fillStyle = &#x27;rgba(200,204,212,.5)&#x27;; b.fillText(&#x27;n&#x27; + ((rnd() * 99) | 0), px + 7, py); }
+  }
+  // dotted chains of small rings (as in the original)
+  for (let k = 0; k &lt; 3; k++) {
+    const rad = R * rr(0.45, 0.85), a0 = rr(0, TAU), cnt = 22 + (rnd() * 14 | 0);
+    b.strokeStyle = &#x27;rgba(235,238,244,.55)&#x27;; b.lineWidth = 0.8;
+    for (let i = 0; i &lt; cnt; i++) { const a = a0 + i * 0.022; b.beginPath(); b.arc(Math.cos(a) * rad, Math.sin(a) * rad, 2.2, 0, TAU); b.stroke(); }
+  }
+  all.forEach(c =&gt; c.x.restore());
+  if (HAS_FILTER &amp;&amp; C.webBlur &gt; 0) {
+    all.forEach((c, i) =&gt; {
+      const orig = document.createElement(&#x27;canvas&#x27;); orig.width = c.width; orig.height = c.height; orig.getContext(&#x27;2d&#x27;).drawImage(c, 0, 0);
+      const x = c.x; x.save(); x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, c.width, c.height);
+      x.filter = `blur(${(i ? 0.5 : 1) * C.webBlur * d}px)`; x.drawImage(orig, 0, 0); x.filter = &#x27;none&#x27;;
+      x.globalAlpha = Math.max(0.15, 1 - C.webBlur * 0.3); x.drawImage(orig, 0, 0); x.restore();
+    });
+  }
+}
+const qpt = (cv, t) =&gt; {
+  const u = 1 - t;
+  return { x: u * u * cv.p0.x + 2 * u * t * cv.c.x + t * t * cv.p1.x, y: u * u * cv.p0.y + 2 * u * t * cv.c.y + t * t * cv.p1.y };
+};
+function newRunner(init) {
+  const cv = pick(curves), t = init ? rnd() : 0, p = qpt(cv, t);
+  // mixed speed personalities so lone lines never move in lockstep
+  const k = rnd(); let mode, sp;
+  if (rnd() &gt; C.runnerVariety) { mode = 1; sp = rr(0.12, 0.38); }   // uniform (version A style)
+  else if (k &lt; 0.3) { mode = 0; sp = rr(0.15, 0.28); }        // steady, ignores the beat
+  else if (k &lt; 0.65) { mode = 1; sp = rr(0.1, 0.3); }    // surges on the beat
+  else if (k &lt; 0.8) { mode = 0; sp = rr(0.04, 0.08); }   // slow drift
+  else if (k &lt; 0.92) { mode = 0; sp = rr(0.5, 0.85); }   // fast streak
+  else { mode = 2; sp = rr(0.06, 0.12); }                 // accelerates along its path
+  return { cv, t, sp, mode, px: p.x, py: p.y, b: rnd() &lt; 0.1 };
+}
+
+/* ---------- comets: short bright bundles sweeping with ease-in-out ---------- */
+function spawnComet() {
+  const lines = [], n = Math.max(2, Math.round((8 + (rnd() * 12 | 0)) * C.cometLines));
+  if (rnd() &lt; 0.6) {
+    // concentric arc bundle hugging the ring
+    const rad = R * rr(0.55, 0.9), a0 = rr(-thV, thV) * 0.85, span = rr(0.35, 0.9) * (rnd() &lt; 0.5 ? -1 : 1), gap = rr(2.6, 4.4) * C.cometWidth;
+    for (let k = 0; k &lt; n; k++) lines.push({ arc: true, r: rad - k * gap + gauss() * 0.6, a0: a0 + gauss() * 0.01, span });
+  } else {
+    // converging bundle: inner point → ring edge
+    const ang = rr(-thV, thV) * 0.8, oa = ang + rr(-1.3, 1.3), orad = R * rr(0.25, 0.75);
+    const o = { x: Math.cos(oa) * orad, y: Math.sin(oa) * orad };
+    const spread = rr(0.08, 0.25) * C.cometWidth, bend = rr(0.2, 0.5) * (rnd() &lt; 0.5 ? -1 : 1);
+    for (let i = 0; i &lt; n; i++) {
+      const ta = ang + (i / n - 0.5) * spread;
+      const p1 = { x: Math.cos(ta) * (R - 2), y: Math.sin(ta) * (R - 2) };
+      const p0 = { x: o.x + gauss() * 10, y: o.y + gauss() * 10 };
+      const mx = (p0.x + p1.x) / 2, my = (p0.y + p1.y) / 2, dx = p1.x - p0.x, dy = p1.y - p0.y;
+      lines.push({ p0, c: { x: mx - dy * bend + gauss() * 8, y: my + dx * bend + gauss() * 8 }, p1 });
+    }
+  }
+  comets.push({ lines, life: 0, hit: false, rot0: ringRot, dur: rr(0.4, 0.85) / C.cometSpeed, win: rr(0.22, 0.4), glow: rnd() &lt; 0.4, tint: rnd() &lt; 0.15 });
+}
+const cpt = (l, t) =&gt; { if (!l.arc) return qpt(l, t); const r = l.r + (R - 2 - l.r) * t * t, a = l.a0 + l.span * t; return { x: Math.cos(a) * r, y: Math.sin(a) * r }; };
+function strokeComet(ctx, c, t0, t1, steps) {
+  ctx.beginPath();
+  for (const l of c.lines) for (let s = 0; s &lt;= steps; s++) {
+    const p = cpt(l, t0 + (t1 - t0) * (s / steps));
+    s ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+  }
+  ctx.stroke();
+}
+
+/* ---------- outer: stacked, constantly changing layers ----------
+   L0 haze bands (translucent wide wedges, additive, short lifecycles)
+   L1 far strands (thin, dim, slower rotation → parallax)
+   L2 main strands (dense, ring-attached, staircase tips + flowing dashes)
+   L3 root flares (bright white blocks at the ring edge, glow)          */
+let GR = {}, strandLayers = [], hazes = [], flares = [];
+const HAZE_COL = [&#x27;196,180,252&#x27;, &#x27;242,242,252&#x27;, &#x27;190,222,222&#x27;];
+const clamp = (v, a, b) =&gt; Math.max(a, Math.min(b, v));
+const normA = a =&gt; ((a + Math.PI) % TAU + TAU) % TAU - Math.PI;
+function makeProfile(n) {
+  const prof = []; let v = rr(0.45, 1), run = 0;
+  for (let k = 0; k &lt; n; k++) {
+    if (run-- &lt;= 0) { v = clamp(v + gauss() * 0.4, 0.22, 1); run = 2 + (rnd() * 5 | 0); }
+    prof.push(clamp(v + gauss() * 0.07, 0.18, 1));
+  }
+  return prof;
+}
+function makeStrandLayer(stepDeg, rotK, lumK, lw, lenK, solidK, cover, nMin, nMax, brightP, dyn = &#x27;soft&#x27;) {
+  const step = stepDeg * Math.PI / 180, nb = Math.floor(TAU / step), ws = [];
+  const count = Math.round(nb * cover / ((nMin + nMax) / 2));
+  for (let j = 0; j &lt; count; j++) {
+    const n = nMin + (rnd() * (nMax - nMin) | 0), bright = rnd() &lt; brightP;
+    ws.push({
+      i0: (rnd() * nb) | 0, n, base: rr(0.35, 1), len: rr(0.1, 0.5), kick: 0,
+      ph: rnd() * TAU, ph2: rnd() * TAU, f1: rr(0.22, 0.6), f2: rr(0.8, 1.7),
+      lum: bright ? rr(0.75, 1) : rr(0.16, 0.55), tint: rnd() &lt; 0.5 ? 1 : 0,
+      lwK: rnd() &lt; 0.2 ? rr(1.35, 2.1) : rr(0.6, 1.15), lenS: rr(0.6, 1.25),
+      prof: makeProfile(n), pf: Array.from({ length: n }, () =&gt; rr(1, 4)), pp: Array.from({ length: n }, () =&gt; rnd() * TAU),
+      ds: Array.from({ length: n }, () =&gt; rnd()), dsp: rr(0.7, 1.8), flow: 0
+    });
+  }
+  return { step, rotK, lumK, lw, lenK, solidK, wedges: ws, off: rnd() * TAU, dyn };
+}
+function buildOuter() {
+  strandLayers = [
+    //               step  rotK  lumK  lw    lenK  solidK cover nMin nMax brightP
+    makeStrandLayer(0.22, 0.45, 0.30, 0.55, 1.15, 0.9,  1.1,  20,  90, 0.2),   // far: faint, thin, slow
+    makeStrandLayer(0.16, 0.75, 0.58, 0.8,  1.05, 0.7,  0.9,  14,  70, 0.28),  // mid
+    makeStrandLayer(0.12, 1.0,  1.0,  1.0,  1.0,  0.5,  0.75, 12,  60, 0.32),  // main (dashes + tips)
+    makeStrandLayer(0.45, 1.0,  0.5,  1.8,  0.8,  0.6,  0.35, 4,   16, 0.3),   // near: few thick strokes
+    makeStrandLayer(0.12, 1.0,  0.85, 1.0,  1.0,  0.5,  0.55, 14,  70, 0.32, &#x27;bounce&#x27;),  // v4 wave / rebound layer
+  ];
+  wedges = strandLayers[2].wedges.concat(strandLayers[4].wedges);
+  hazes = []; flares = [];
+  GR = {};
+  const mkG = (stops, r1) =&gt; { const g = S.createRadialGradient(cx, cy, RO, cx, cy, r1); stops.forEach(s =&gt; g.addColorStop(s[0], s[1])); return g; };
+  GR.s0 = mkG([[0, &#x27;rgba(248,248,255,1)&#x27;], [0.35, &#x27;rgba(228,226,242,.8)&#x27;], [1, &#x27;rgba(190,190,214,.3)&#x27;]], RMAX * 0.95);
+  GR.s2 = mkG([[0, &#x27;rgba(225,245,242,1)&#x27;], [0.3, &#x27;rgba(176,214,210,.8)&#x27;], [1, &#x27;rgba(140,180,186,.3)&#x27;]], RMAX * 0.95);
+  GR.s1 = mkG([[0, &#x27;rgba(240,236,255,1)&#x27;], [0.3, &#x27;rgba(196,182,244,.82)&#x27;], [1, &#x27;rgba(160,140,228,.3)&#x27;]], RMAX * 0.95);
+  // haze tints: lavender / pale white / grey-teal
+  GR.h0 = mkG([[0, &#x27;rgba(205,190,255,.95)&#x27;], [0.25, &#x27;rgba(180,165,240,.7)&#x27;], [0.7, &#x27;rgba(150,135,215,.25)&#x27;], [1, &#x27;rgba(120,110,190,0)&#x27;]], RMAX);
+  GR.h1 = mkG([[0, &#x27;rgba(250,250,255,1)&#x27;], [0.2, &#x27;rgba(225,225,240,.65)&#x27;], [0.65, &#x27;rgba(200,200,225,.2)&#x27;], [1, &#x27;rgba(180,180,210,0)&#x27;]], RMAX);
+  GR.h2 = mkG([[0, &#x27;rgba(200,230,228,.9)&#x27;], [0.25, &#x27;rgba(170,205,210,.6)&#x27;], [0.7, &#x27;rgba(140,170,185,.2)&#x27;], [1, &#x27;rgba(120,150,170,0)&#x27;]], RMAX);
+  for (let i = 0; i &lt; 14; i++) spawnHaze(true);
+  initFlyers();
+}
+function spawnHaze(init) {
+  const k = rnd();
+  hazes.push({
+    a: rr(-thS, thS) - ringRot, w: rnd() &lt; 0.7 ? rr(0.015, 0.07) : rr(0.08, 0.18),
+    len: rr(0.35, 1), cur: init ? rr(0.2, 0.8) : 0, age: init ? rr(0, 0.5) : 0,
+    life: rr(0.35, 1.6), alpha: rr(0.12, 0.42), tint: k &lt; 0.55 ? 0 : k &lt; 0.85 ? 1 : 2, drift: rr(-0.04, 0.04)
+  });
+}
+function spawnFlare(a) {
+  flares.push({ a: a == null ? rr(-thS, thS) * 0.95 - ringRot : a, w: rr(0.006, 0.04), len: rr(18, 110), age: 0, life: rr(0.2, 0.55), alpha: rr(0.6, 1) });
+}
+function buildLanes() {
+  laneC = mkd(W, H, DPR);
+  const x = laneC.x;
+  for (let i = 0; i &lt; 700; i++) {
+    const a = rr(-thS, thS);
+    x.strokeStyle = `rgba(210,205,235,${rr(0.01, 0.035)})`; x.lineWidth = rr(0.5, 1);
+    const r0 = RO + 4, r1 = rr(RO + 60, RMAX * 0.8);
+    x.beginPath(); x.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0); x.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); x.stroke();
+  }
+}
+function updateOuter(dt) {
+  for (let i = pulses.length - 1; i &gt;= 0; i--) { const p = pulses[i]; p.c += p.v * dt; p.life -= dt; if (p.life &lt;= 0) pulses.splice(i, 1); }
+  for (const Lr of strandLayers) {
+    const rot = ringRot * Lr.rotK + Lr.off;
+    for (const w of Lr.wedges) {
+      const am = normA((w.i0 + w.n / 2) * Lr.step + rot);
+      w.vis = Math.abs(am) &lt; thS + 0.2;
+      w.flow += dt * w.dsp * (0.45 + 2.2 * env);
+      if (!w.vis) { w.len *= 0.98; continue; }
+      let p = 0;
+      for (const pl of pulses) { const f = Math.min(1, pl.life / 0.5) * Math.min(1, (pl.L - pl.life) / 0.15 + 0.3); p += pl.amp * f * Math.exp(-(((am - pl.c) / pl.w) ** 2)); }
+      if (Lr.dyn === &#x27;bounce&#x27;) {
+        const idle = w.base * (0.36 + 0.14 * Math.sin(T * 0.9 + w.ph));
+        const tgt = Math.min(1, idle + p * 0.75 + w.kick * 0.6);
+        w.kick *= Math.exp(-dt * 2.4);
+        w.len += (tgt - w.len) * Math.min(1, (tgt &gt; w.len ? 15 : 2.2) * dt);   // snap out on the wave, ease back
+      } else {
+        const n1 = 0.5 + 0.5 * Math.sin(T * w.f1 + w.ph), n2 = 0.5 + 0.5 * Math.sin(T * w.f2 + w.ph2);
+        const idle = w.base * (0.4 + 0.34 * n1 + 0.14 * n2);
+        const tgt = Math.min(1.05, (idle + p * 0.7 + w.kick * 0.55) * w.lenS);
+        w.kick *= Math.exp(-dt * 1.8);
+        w.len += (tgt - w.len) * Math.min(1, (tgt &gt; w.len ? 5 : 1.3) * dt);
+      }
+    }
+  }
+  // haze lifecycle
+  for (let i = hazes.length - 1; i &gt;= 0; i--) {
+    const h = hazes[i]; h.age += dt;
+    h.cur += (h.len - h.cur) * Math.min(1, 9 * dt);
+    if (h.age &gt; h.life + 0.6) hazes.splice(i, 1);
+  }
+  if (hazes.length &lt; C.hazeCount &amp;&amp; rnd() &lt; 0.25) spawnHaze(false);
+  for (let i = flares.length - 1; i &gt;= 0; i--) { flares[i].age += dt; if (flares[i].age &gt; flares[i].life) flares.splice(i, 1); }
+  if (rnd() &lt; 0.06 * C.flareRate) spawnFlare();
+  updateFlyers(dt);
+}
+function onBeatOuter() {
+  onBeatFlyers();
+  for (let i = 0; i &lt; 2 + (rnd() * 5 | 0); i++) { const w = pick(wedges); w.kick = rr(0.4, 1); if (rnd() &lt; 0.5) w.prof = makeProfile(w.n); }
+  for (let i = 0; i &lt; 2; i++) { const w = pick(wedges); w.lum = rnd() &lt; 0.4 ? rr(0.8, 1) : rr(0.25, 0.6); }
+  const nh = beatN % 4 === 0 ? 5 + (rnd() * 4 | 0) : 1 + (rnd() * 3 | 0);
+  for (let i = 0; i &lt; Math.round(nh * C.hazeCount / 8); i++) spawnHaze(false);
+  const nf = Math.round((1 + (rnd() * 4 | 0)) * C.flareRate);
+  for (let i = 0; i &lt; nf; i++) spawnFlare(hazes.length &amp;&amp; rnd() &lt; 0.6 ? pick(hazes).a : null);
+}
+function hazeEnv(h) {
+  const a = Math.min(1, h.age / 0.12);                       // fast in
+  const o = h.age &gt; h.life ? Math.max(0, 1 - (h.age - h.life) / 0.6) : 1; // slower out
+  return a * o * (0.85 + 0.15 * Math.sin(h.age * 30));      // slight flicker
+}
+const EDGE_A = [0.28, 0.62, 1];
+function drawStrands(Lr, collect) {
+  const span = RMAX - RO - 20, r0 = RO + 3, rot = ringRot * Lr.rotK + Lr.off;
+  S.lineCap = &#x27;butt&#x27;;
+  for (const w of Lr.wedges) {
+    if (!w.vis) continue;
+    const L = w.len * span * Lr.lenK * C.beamLen;
+    if (L &lt; 3) continue;
+    const a0 = normA(w.i0 * Lr.step + rot), a1 = a0 + w.n * Lr.step;
+    if (a1 &lt; -thS - 0.03 || a0 &gt; thS + 0.03) continue;
+    const alpha = Math.min(1, w.lum * Lr.lumK * (0.3 + 0.7 * Math.min(1, w.len * 1.8)) * C.beamBright * (Lr.dyn === &#x27;bounce&#x27; ? C.beamBounce : 1));
+    if (alpha &lt; 0.005) continue;
+    const lwW = Lr.lw * w.lwK * C.beamWidth;
+    const paths = [new Path2D(), new Path2D(), new Path2D()];
+    for (let k = 0; k &lt; w.n; k++) {
+      const a = a0 + (k + 0.5) * Lr.step, ca = Math.cos(a), sa = Math.sin(a);
+      const edge = Math.sin(Math.PI * (k + 0.5) / w.n), b = edge &lt; 0.38 ? 0 : edge &lt; 0.72 ? 1 : 2;
+      const pr = w.prof[k];
+      const l = L * pr * (0.5 + 0.5 * Math.sqrt(edge)) * (0.92 + 0.08 * Math.sin(T * w.pf[k] + w.pp[k]));
+      const solid = l * (Lr.solidK + 0.3 * pr * (1 - Lr.solidK));
+      paths[b].moveTo(cx + ca * r0, cy + sa * r0); paths[b].lineTo(cx + ca * (r0 + solid), cy + sa * (r0 + solid));
+      if (!collect) continue;
+      const tail = l - solid, da = alpha * EDGE_A[b];
+      if (tail &gt; 6) for (let d = 0; d &lt; 2; d++) {
+        const ph = (w.flow + w.ds[k] + d * 0.5) % 1;
+        const s0 = solid + tail * ph, s1 = Math.min(l, s0 + 3 + tail * 0.22 * (1 - ph * 0.5));
+        if (s1 &gt; s0) collect.dash.push(ca, sa, s0, s1, da);
+      }
+      if ((k + (T * 12 | 0)) % 4 === 0) collect.tip.push(ca, sa, l, da);
+    }
+    S.strokeStyle = GR[&#x27;s&#x27; + w.tint]; S.lineWidth = lwW;
+    for (let b = 0; b &lt; 3; b++) { S.globalAlpha = alpha * EDGE_A[b]; S.stroke(paths[b]); }
+    if (w.lum &gt; 0.85 &amp;&amp; C.beamGlow &gt; 0) { S.globalAlpha = Math.min(1, alpha * 0.06 * C.beamGlow); S.lineWidth = lwW * 2.5; S.stroke(paths[2]); }
+  }
+}
+const hash = x =&gt; { const s = Math.sin(x * 12.9898) * 43758.5453; return s - Math.floor(s); };
+function radialLines(a0, a1, st, r0, L, seed, lo) {
+  S.beginPath();
+  let k = 0;
+  for (let a = a0; a &lt; a1; a += st, k++) {
+    const l = L * (lo + (1 - lo) * hash(k + seed)), ca = Math.cos(a), sa = Math.sin(a);
+    S.moveTo(cx + ca * r0, cy + sa * r0); S.lineTo(cx + ca * (r0 + l), cy + sa * (r0 + l));
+  }
+}
+/* ---- fly-out streaks: shoot outward and never retract, interleaved with the beams ----
+   singles: sparse, dimmer, respawn forever
+   bursts : packets of parallel streaks launched together on the beat, brighter, die at the edge */
+let flyers = [], flyBands = [];
+function newFlyBand() { return { a: rr(-thS, thS), w: rr(0.01, 0.05), life: rr(2, 6) }; }
+function newFlyer(init) {
+  let a;
+  if (rnd() &lt; 0.5) { const b = pick(flyBands); a = b.a + gauss() * b.w; } else a = rr(-thS, thS);
+  return {
+    a: a - ringRot, len: 20 + Math.pow(rnd(), 2) * 320, r: init ? rr(RO, RMAX) : RO + rr(0, 25),
+    sp: rr(260, 900), lw: rnd() &lt; 0.08 ? rr(1.2, 1.7) : rr(0.5, 1), lv: rnd() &lt; 0.12 ? 1 : 0, tint: rnd() &lt; 0.22 ? 1 : 0, burst: false
+  };
+}
+function spawnFlyBurst() {
+  const a = rr(-thS, thS) * 0.95, n = Math.max(1, Math.round((14 + (rnd() * 30 | 0)) * C.burstSize)), spread = rr(0.01, 0.045);
+  const sp = rr(450, 1150), len = rr(70, 320), r0 = RO + rr(0, 8), tint = rnd() &lt; 0.3 ? 1 : 0, lv = rnd() &lt; 0.45 ? 2 : 1;
+  for (let i = 0; i &lt; n; i++) {
+    flyers.push({
+      a: a + (i / n - 0.5) * spread + gauss() * 0.0015 - ringRot, len: len * rr(0.7, 1.15), r: r0 - rr(0, len * 0.35),
+      sp: sp * rr(0.92, 1.08), lw: rnd() &lt; 0.2 ? 1.3 : rr(0.6, 1), lv, tint, burst: true
+    });
+  }
+}
+function initFlyers() {
+  flyBands = Array.from({ length: 7 }, newFlyBand);
+  flyers = Array.from({ length: Math.round(Math.min(750, 320 + W * 0.25) * C.flyerCount) }, () =&gt; newFlyer(true));
+}
+function updateFlyers(dt) {
+  for (const b of flyBands) { b.life -= dt; if (b.life &lt;= 0) Object.assign(b, newFlyBand()); }
+  const k = (0.7 + 0.9 * env) * C.flyerSpeed;
+  for (let i = flyers.length - 1; i &gt;= 0; i--) {
+    const f = flyers[i];
+    f.r += f.sp * dt * k;
+    if (f.r - f.len &gt; RMAX) { if (f.burst) flyers.splice(i, 1); else flyers[i] = newFlyer(false); }
+  }
+}
+function onBeatFlyers() {
+  const n = Math.round((beatN % 4 === 0 ? 3 + (rnd() * 2 | 0) : 1 + (rnd() * 2 | 0)) * C.burstRate);
+  for (let i = 0; i &lt; n; i++) setTimeout(spawnFlyBurst, i * rr(20, 120));
+}
+const FLY_A = [0.16, 0.36, 0.7];
+function drawFlyers(bursts) {
+  const buckets = {};
+  for (const f of flyers) {
+    if (f.burst !== bursts) continue;
+    const a = normA(f.a + ringRot);
+    if (a &lt; -thS - 0.05 || a &gt; thS + 0.05) continue;
+    const key = f.tint * 10 + f.lv + (f.lw &gt; 1.15 ? 100 : 0) + (f.burst ? 1000 : 0);
+    (buckets[key] || (buckets[key] = [])).push(f, a);
+  }
+  for (const key in buckets) {
+    const arr = buckets[key], f0 = arr[0];
+    S.strokeStyle = f0.tint ? GR.s1 : GR.s0; S.globalAlpha = Math.min(1, FLY_A[f0.lv] * (f0.burst ? C.burstBright : C.flyerBright)); S.lineWidth = ((key % 1000) &gt;= 100 ? 1.5 : 0.8) * C.flyerWidth;
+    S.beginPath();
+    for (let i = 0; i &lt; arr.length; i += 2) {
+      const f = arr[i], a = arr[i + 1], r0 = Math.max(RO + 3, f.r - f.len), r1 = f.r;
+      if (r1 &lt;= r0) continue;
+      const ca = Math.cos(a), sa = Math.sin(a);
+      S.moveTo(cx + ca * r0, cy + sa * r0); S.lineTo(cx + ca * r1, cy + sa * r1);
+    }
+    S.stroke();
+  }
+  S.globalAlpha = 1;
+}
+function drawOuterFar() {
+  const span = RMAX - RO - 20, r0 = RO + 3;
+  // haze bundles 鈥?very dense, faint lines that merge into soft bands
+  for (const h of hazes) {
+    const e = hazeEnv(h); if (e &lt;= 0.01) continue;
+    if (h.seed === undefined) h.seed = rnd() * 1000;
+    const L = h.cur * span;
+    radialLines(h.a + ringRot - h.w / 2, h.a + ringRot + h.w / 2, OSTEP * 0.55, r0, L, h.seed, 0.45);
+    S.strokeStyle = GR[&#x27;s&#x27; + (h.tint === 1 ? 0 : h.tint === 2 ? 2 : 1)];
+    S.globalAlpha = Math.min(1, h.alpha * e * 0.05 * C.hazeBright); S.lineWidth = 2.2; S.stroke();
+    S.globalAlpha = Math.min(1, h.alpha * e * 0.6 * C.hazeBright); S.lineWidth = 0.55; S.stroke();
+  }
+  drawStrands(strandLayers[0], null);   // far strands
+  drawStrands(strandLayers[1], null);   // mid strands
+  drawFlyers(false);                    // single fly-outs live in the background
+  S.globalAlpha = 1;
+}
+function drawOuterNear() {
+  const r0 = RO + 3;
+  const col = { dash: [], tip: [] };
+  drawStrands(strandLayers[2], col);
+  drawStrands(strandLayers[4], col);   // wave / rebound layer
+  drawStrands(strandLayers[3], null);   // near thick strokes
+  S.strokeStyle = &#x27;#fff&#x27;; S.lineWidth = 1.05;
+  for (const lv of [0.35, 0.65, 1]) {
+    S.globalAlpha = Math.min(1, lv * C.dashBright); S.beginPath();
+    const dp = col.dash;
+    for (let i = 0; i &lt; dp.length; i += 5) {
+      const a = dp[i + 4]; if (a &gt; lv || a &lt;= lv - 0.35) continue;
+      S.moveTo(cx + dp[i] * (r0 + dp[i + 2]), cy + dp[i + 1] * (r0 + dp[i + 2])); S.lineTo(cx + dp[i] * (r0 + dp[i + 3]), cy + dp[i + 1] * (r0 + dp[i + 3]));
+    }
+    S.stroke();
+  }
+  S.fillStyle = &#x27;#fff&#x27;;
+  for (let i = 0; i &lt; col.tip.length; i += 4) {
+    S.globalAlpha = Math.min(1, col.tip[i + 3] * 1.2);
+    const r = r0 + col.tip[i + 2];
+    S.fillRect(cx + col.tip[i] * r - 0.8, cy + col.tip[i + 1] * r - 0.8, 1.6, 1.6);
+  }
+  drawFlyers(true);                     // burst packets are in the foreground
+  S.strokeStyle = GR.s0;
+  for (const f of flares) {
+    if (f.seed === undefined) f.seed = rnd() * 1000;
+    const t = f.age / f.life, e = (t &lt; 0.15 ? t / 0.15 : Math.pow(1 - (t - 0.15) / 0.85, 2)) * f.alpha;
+    const L = f.len * (0.6 + 0.4 * easeO(Math.min(1, t * 3)));
+    radialLines(f.a + ringRot - f.w / 2, f.a + ringRot + f.w / 2, OSTEP * 0.45, r0, L, f.seed, 0.4);
+    S.globalAlpha = Math.min(1, e * 0.06 * C.flareBright); S.lineWidth = 2.6; S.stroke();
+    S.globalAlpha = Math.min(1, e * C.flareBright); S.lineWidth = 0.8; S.stroke();
+  }
+  S.globalAlpha = 1;
+}
+
+/* ---------- foreground bokeh: out-of-focus specks closest to the viewer ---------- */
+let bokehs = [], bokehSpr = null;
+function mkBokehSprite() {
+  const c = document.createElement(&#x27;canvas&#x27;); c.width = c.height = 128;
+  const x = c.getContext(&#x27;2d&#x27;), g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, &#x27;rgba(255,255,255,.9)&#x27;); g.addColorStop(0.5, &#x27;rgba(235,232,255,.5)&#x27;); g.addColorStop(0.82, &#x27;rgba(220,215,255,.22)&#x27;);
+  g.addColorStop(0.93, &#x27;rgba(225,220,255,.32)&#x27;); g.addColorStop(1, &#x27;rgba(220,215,255,0)&#x27;);
+  x.fillStyle = g; x.fillRect(0, 0, 128, 128); return c;
+}
+function newBokeh() {
+  const big = rnd() &lt; 0.3;
+  return { x: rr(-0.1, 1.1) * W, y: rr(-0.1, 1.1) * H, r: big ? rr(24, 64) : rr(5, 22), a: big ? rr(0.025, 0.07) : rr(0.05, 0.16),
+    vx: rr(-10, 10), vy: rr(-6, 6), st: rnd() &lt; 0.3 ? rr(2, 5) : 1, ph: rnd() * TAU };
+}
+function drawBokeh(dt) {
+  const n = Math.round(C.bokeh);
+  while (bokehs.length &lt; n) bokehs.push(newBokeh());
+  if (bokehs.length &gt; n) bokehs.length = n;
+  if (!n) return;
+  if (!bokehSpr) bokehSpr = mkBokehSprite();
+  const k = 1 + 0.6 * C.parallax, z = 1 + (cam.z - 1) * k, ox = (cam.x - W / 2) * k, oy = (cam.y - H / 2) * k;
+  S.setTransform(DPR, 0, 0, DPR, 0, 0); S.globalCompositeOperation = &#x27;lighter&#x27;;
+  for (const b of bokehs) {
+    b.x += b.vx * dt; b.y += b.vy * dt;
+    if (b.x &lt; -0.15 * W) b.x += 1.3 * W; if (b.x &gt; 1.15 * W) b.x -= 1.3 * W;
+    if (b.y &lt; -0.15 * H) b.y += 1.3 * H; if (b.y &gt; 1.15 * H) b.y -= 1.3 * H;
+    const sx = (b.x - W / 2 - ox) * z + W / 2, sy = (b.y - H / 2 - oy) * z + H / 2, r = b.r * z;
+    S.globalAlpha = Math.min(1, b.a * C.bokehBright * (0.75 + 0.25 * Math.sin(T * 0.8 + b.ph)) * (1 + env * 0.3));
+    S.drawImage(bokehSpr, sx - r * b.st, sy - r, 2 * r * b.st, 2 * r);
+  }
+  S.globalAlpha = 1; S.globalCompositeOperation = &#x27;source-over&#x27;;
+}
+/* ---------- ring: pre-rendered dot-matrix data blocks on a black band ---------- */
+const RING_SC = 2.4;
+let slots = [];
+const easeOX = t =&gt; t &gt;= 1 ? 1 : 1 - Math.pow(2, -10 * t);
+const rot = { from: 0, to: 0, t: 1, dur: 1, hold: 0, ease: easeIO };
+function ringMove() {
+  const r = rnd(); let d, dur, ease;
+  if (r &lt; 0.22) { d = rr(1.1, 2.1); dur = rr(0.7, 1.05); ease = easeIO; }        // fast spin
+  else if (r &lt; 0.64) { d = rr(0.14, 0.48); dur = rr(0.18, 0.38); ease = easeOX; } // snap &amp; stop
+  else { d = rr(0.05, 0.18); dur = rr(0.3, 0.6); ease = easeIO; }               // small nudge
+  if (rnd() &lt; 0.08) d = -d * 0.5;  d *= C.ringSpeed;
+  Object.assign(rot, { from: ringRot, to: ringRot + d, t: 0, dur, ease, hold: rr(0.04, 0.4) * C.ringPause });
+}
+function flashSlotAt(ang) {
+  let best = null, bd = 9;
+  for (const s of slots) { const d = Math.abs(normA(s.a + ringRot - ang)); if (d &lt; bd) { bd = d; best = s; } }
+  if (best &amp;&amp; bd &lt; 0.08) best.flash = Math.max(best.flash, 0.8);
+}
+function updateRing(dt) {
+  if (rot.t &lt; rot.dur) { rot.t += dt; ringRot = rot.from + (rot.to - rot.from) * rot.ease(Math.min(1, rot.t / rot.dur)); }
+  else { rot.hold -= dt; ringRot += 0.02 * dt; }
+}
+function buildCards() {
+  slots = [];
+  const band = RO - R, mid = R + band * 0.42;
+  let a = 0;
+  while (a &lt; TAU - 0.03) {
+    const hpx = rr(16, 62), da = hpx / mid, gap = rr(3, 9) / mid;
+    slots.push({ a: a + da / 2, da, hpx, c: null, flash: 0 });
+    a += da + gap;
+  }
+  Object.assign(rot, { from: 0, to: 0, t: 1, dur: 1, hold: 0 });
+}
+const TINTS = [[232, 234, 240], [232, 234, 240], [232, 234, 240], [232, 234, 240], [232, 234, 240], [232, 234, 240], [196, 184, 246], [196, 184, 246], [168, 222, 214], [206, 212, 150]];
+const HEAD = [&#x27;SOLVER/02&#x27;, &#x27;EXTRACT&#x27;, &#x27;REF.SCENE 07&#x27;, &#x27;METHOD M04&#x27;, &#x27;CHECK&#x27;, &#x27;RESIDUAL&#x27;, &#x27;PAPER 37&#x27;, &#x27;AGENT 09&#x27;, &#x27;BUFFER A&#x27;,
+  &#x27;DIFF FIELD&#x27;, &#x27;STEP 1284&#x27;, &#x27;MESH 64x64&#x27;, &#x27;PROJECT&#x27;, &#x27;ADVECT&#x27;, &#x27;BC / WALL&#x27;, &#x27;LBM D2Q9&#x27;, &#x27;QUEUE&#x27;, &#x27;TRACE&#x27;, &#x27;EQ.(4)&#x27;, &#x27;FIG.3&#x27;, &#x27;VALIDATE&#x27;, &#x27;SCENE 12&#x27;];
+const KEYS = [&#x27;dt&#x27;, &#x27;CFL&#x27;, &#x27;nu&#x27;, &#x27;Re&#x27;, &#x27;tol&#x27;, &#x27;iter&#x27;, &#x27;L2&#x27;, &#x27;mass&#x27;, &#x27;div&#x27;, &#x27;u_max&#x27;, &#x27;rho&#x27;, &#x27;err&#x27;, &#x27;grid&#x27;, &#x27;seed&#x27;];
+const CODE_T = [&#x27;load()&#x27;, &#x27;step(u)&#x27;, &#x27;proj(p)&#x27;, &#x27;bc.apply&#x27;, &#x27;solve()&#x27;, &#x27;grad p&#x27;, &#x27;div u&#x27;, &#x27;assert&#x27;, &#x27;f_eq&#x27;, &#x27;stream&#x27;, &#x27;collide&#x27;, &#x27;ok&#x27;, &#x27;PASS&#x27;,
+  &#x27;ref#12&#x27;, &#x27;diff&#x27;, &#x27;L2&lt;tol&#x27;, &#x27;u*&#x27;, &#x27;-&gt;&#x27;, &#x27;==&#x27;, &#x27;dt/2&#x27;, &#x27;emit&#x27;, &#x27;push&#x27;, &#x27;read&#x27;, &#x27;fig3&#x27;, &#x27;eq4&#x27;];
+const rgba = (t, a) =&gt; `rgba(${t[0]},${t[1]},${t[2]},${a})`;
+const fmtNum = () =&gt; { const k = rnd(); return k &lt; 0.3 ? rr(0, 1).toFixed(3) : k &lt; 0.55 ? (rr(1, 9).toFixed(1) + &#x27;e-&#x27; + (2 + (rnd() * 5 | 0))) : k &lt; 0.8 ? String((rnd() * 9999) | 0) : rr(0, 100).toFixed(1); };
+function glyphStrips(x, x1, y0, y1, pitch, opt, ctx) {
+  const tint = opt.tint;
+  for (let lx = x; lx &lt; x1 - 1; lx += pitch) {
+    if (opt.colGap &amp;&amp; rnd() &lt; 0.18) { lx += pitch * 0.8; continue; }
+    const len = (y1 - y0) * (opt.ragged ? rr(0.35, 1) : rr(0.85, 1));
+    const start = opt.ragged &amp;&amp; rnd() &lt; 0.3 ? y0 + rr(0, (y1 - y0) * 0.3) : y0;
+    let y = start;
+    const lb = rr(0.55, 1);
+    while (y &lt; Math.min(y1, start + len)) {
+      const cl = opt.solid ? rr(2, 6) : rr(0.9, 2.2);
+      if (rnd() &lt; 0.9) { ctx.fillStyle = rgba(tint, lb * rr(0.6, 1)); ctx.fillRect(lx, y, opt.th, Math.min(cl, y1 - y)); }
+      y += cl + (rnd() &lt; 0.12 ? rr(1.5, 3) : rr(0.5, 0.9));
+    }
+  }
+}
+// ---- block renderers: (ctx, x0, x1, y0, y1, tint) — x is radial, y is tangential ----
+function header(c, x0, x1, y, t) {
+  c.font = `700 4.3px ${FONT}`; c.fillStyle = rgba(t, 0.95); c.fillText(pick(HEAD), x0, y);
+  c.fillStyle = rgba(t, 0.55); c.fillText(String((rnd() * 99) | 0).padStart(2, &#x27;0&#x27;), x1 - 6, y);
+  c.fillStyle = rgba(t, 0.3); c.fillRect(x0, y + 5.6, x1 - x0, 0.45);
+  return y + 7.5;
+}
+const BLOCKS = {
+  code(c, x0, x1, y0, y1, t) {
+    let y = header(c, x0, x1, y0, t);
+    c.font = `500 3.5px ${FONT}`;
+    let n = 1 + (rnd() * 40 | 0);
+    while (y &lt; y1 - 3.5) {
+      c.fillStyle = rgba(t, 0.3); c.fillText(String(n++).padStart(3, &#x27;0&#x27;), x0, y);
+      let xx = x0 + 9;
+      const words = 1 + (rnd() * 4 | 0);
+      for (let i = 0; i &lt; words &amp;&amp; xx &lt; x1 - 4; i++) {
+        const w = pick(CODE_T); c.fillStyle = rgba(t, rnd() &lt; 0.25 ? 1 : rr(0.5, 0.8)); c.fillText(w, xx, y); xx += w.length * 2.15 + 2;
+      }
+      y += 4.6;
+    }
+  },
+  kv(c, x0, x1, y0, y1, t) {
+    let y = y1 - y0 &gt; 18 ? header(c, x0, x1, y0, t) : y0 + 1;
+    c.font = `500 3.6px ${FONT}`;
+    while (y &lt; y1 - 4) {
+      c.fillStyle = rgba(t, 0.5); c.fillText(pick(KEYS), x0, y);
+      const v = fmtNum(); c.fillStyle = rgba(t, 0.95); c.textAlign = &#x27;right&#x27;; c.fillText(v, x1, y); c.textAlign = &#x27;left&#x27;;
+      const bx = x0 + 14, bw = Math.max(0, x1 - x0 - 14 - v.length * 2.2 - 4);
+      c.fillStyle = rgba(t, 0.15); c.fillRect(bx, y + 1.2, bw, 1.2);
+      c.fillStyle = rgba(t, 0.7); c.fillRect(bx, y + 1.2, bw * rnd(), 1.2);
+      y += 5.2;
+    }
+  },
+  spark(c, x0, x1, y0, y1, t) {
+    const y = header(c, x0, x1, y0, t), top = y + 1, bot = y1 - 2, n = 40;
+    c.fillStyle = rgba(t, 0.18); c.fillRect(x0, bot, x1 - x0, 0.4); c.fillRect(x0, (top + bot) / 2, x1 - x0, 0.25);
+    c.strokeStyle = rgba(t, 0.95); c.lineWidth = 0.55; c.beginPath();
+    let v = rnd(), lx = 0, ly = 0;
+    for (let i = 0; i &lt;= n; i++) {
+      v = clamp(v + gauss() * 0.22, 0, 1);
+      lx = x0 + (x1 - x0) * i / n; ly = bot - v * (bot - top);
+      i ? c.lineTo(lx, ly) : c.moveTo(lx, ly);
+    }
+    c.stroke(); c.fillStyle = &#x27;#fff&#x27;; c.fillRect(lx - 0.9, ly - 0.9, 1.8, 1.8);
+  },
+  bars(c, x0, x1, y0, y1, t) {
+    const y = header(c, x0, x1, y0, t), n = 6 + (rnd() * 10 | 0), bh = (y1 - y - 1) / n;
+    c.font = `500 3px ${FONT}`;
+    for (let i = 0; i &lt; n; i++) {
+      const v = rr(0.1, 1), yy = y + i * bh;
+      c.fillStyle = rgba(t, 0.35); c.fillText(String(i).padStart(2, &#x27;0&#x27;), x0, yy);
+      c.fillStyle = rgba(t, v &gt; 0.85 ? 1 : 0.65); c.fillRect(x0 + 7, yy + 0.4, (x1 - x0 - 7) * v, Math.max(0.8, bh - 1.2));
+    }
+  },
+  prog(c, x0, x1, y0, y1, t) {
+    let y = y1 - y0 &gt; 18 ? header(c, x0, x1, y0, t) : y0 + 1;
+    c.font = `500 3.4px ${FONT}`;
+    while (y &lt; y1 - 5) {
+      const p = rnd();
+      c.fillStyle = rgba(t, 0.55); c.fillText(pick([&#x27;read&#x27;, &#x27;build&#x27;, &#x27;review&#x27;, &#x27;qa&#x27;, &#x27;sync&#x27;, &#x27;diff&#x27;]), x0, y);
+      c.fillStyle = rgba(t, 0.9); c.textAlign = &#x27;right&#x27;; c.fillText((p * 100 | 0) + &#x27;%&#x27;, x1, y); c.textAlign = &#x27;left&#x27;;
+      const bx = x0 + 15, bw = x1 - x0 - 26, segs = 12;
+      for (let i = 0; i &lt; segs; i++) { c.fillStyle = rgba(t, i / segs &lt; p ? 0.85 : 0.14); c.fillRect(bx + i * bw / segs, y + 0.6, bw / segs - 0.6, 2); }
+      y += 5.4;
+    }
+  },
+  grid(c, x0, x1, y0, y1, t) {
+    const y = y1 - y0 &gt; 20 ? header(c, x0, x1, y0, t) : y0 + 1, p = rr(2.4, 3.2);
+    for (let yy = y; yy &lt; y1 - p + 0.5; yy += p) for (let xx = x0; xx &lt; x1 - p + 0.5; xx += p) {
+      const v = rnd();
+      c.fillStyle = v &gt; 0.93 ? &#x27;rgba(240,166,198,.95)&#x27; : rgba(t, 0.08 + v * v * 0.8);
+      c.fillRect(xx, yy, p - 0.6, p - 0.6);
+    }
+  },
+  gauge(c, x0, x1, y0, y1, t) {
+    const r = Math.min((y1 - y0) / 2 - 1.5, 9), gx = x0 + r + 1, gy = (y0 + y1) / 2, v = rnd();
+    c.lineWidth = 1.2; c.strokeStyle = rgba(t, 0.15); c.beginPath(); c.arc(gx, gy, r, 0, TAU); c.stroke();
+    c.strokeStyle = rgba(t, 0.95); c.beginPath(); c.arc(gx, gy, r, -Math.PI / 2, -Math.PI / 2 + TAU * v); c.stroke();
+    c.font = `700 ${Math.max(3.2, r * 0.55)}px ${FONT}`; c.textAlign = &#x27;center&#x27;; c.textBaseline = &#x27;middle&#x27;;
+    c.fillStyle = rgba(t, 1); c.fillText((v * 100 | 0) + &#x27;&#x27;, gx, gy); c.textAlign = &#x27;left&#x27;; c.textBaseline = &#x27;top&#x27;;
+    if (x1 - (gx + r) &gt; 20) BLOCKS.kv(c, gx + r + 4, x1, y0, y1, t);
+  },
+  wave(c, x0, x1, y0, y1, t) {
+    const y = header(c, x0, x1, y0, t), mid = (y + y1) / 2, amp = (y1 - y) * 0.38, f1 = rr(0.15, 0.4), f2 = rr(0.5, 1.2), ph = rnd() * 6;
+    [[0.95, 1], [0.4, -0.6]].forEach(([a, k]) =&gt; {
+      c.strokeStyle = rgba(t, a); c.lineWidth = 0.5; c.beginPath();
+      for (let xx = x0; xx &lt;= x1; xx += 0.8) { const yy = mid + amp * k * (Math.sin(xx * f1 + ph) * 0.7 + Math.sin(xx * f2) * 0.3); xx === x0 ? c.moveTo(xx, yy) : c.lineTo(xx, yy); }
+      c.stroke();
+    });
+  },
+  para(c, x0, x1, y0, y1, t) { glyphStrips(x0, x1, y0, y1, rr(2.6, 3.4), { tint: t, ragged: true, th: 1.3 }, c); },
+  cols(c, x0, x1, y0, y1, t) { glyphStrips(x0, x1, y0, y1, rr(3.6, 4.6), { tint: t, colGap: true, th: 1.5 }, c); },
+  barcode(c, x0, x1, y0, y1, t) { glyphStrips(x0, x1, y0, y1, rr(3.2, 4.2), { tint: t, solid: true, th: 1.8 }, c); },
+  matrix(c, x0, x1, y0, y1, t) {
+    const p = rr(2.1, 2.6), dens = rr(0.35, 0.65);
+    for (let yy = y0; yy &lt; y1 - 1; yy += p) for (let xx = x0; xx &lt; x1; xx += p)
+      if (rnd() &lt; dens) { c.fillStyle = rgba(t, rr(0.5, 1)); c.fillRect(xx, yy, 1.4, 1.4); }
+  },
+};
+const BLOCK_W = [[&#x27;code&#x27;, 16], [&#x27;kv&#x27;, 11], [&#x27;spark&#x27;, 9], [&#x27;bars&#x27;, 8], [&#x27;prog&#x27;, 7], [&#x27;grid&#x27;, 7], [&#x27;gauge&#x27;, 3], [&#x27;wave&#x27;, 4],
+  [&#x27;para&#x27;, 12], [&#x27;cols&#x27;, 7], [&#x27;barcode&#x27;, 6], [&#x27;matrix&#x27;, 8]];
+const NEEDS_H = { code: 18, spark: 18, bars: 20, wave: 18, gauge: 16 };
+function pickBlock(h) {
+  for (let tries = 0; tries &lt; 8; tries++) {
+    let r = rnd() * 100, name = &#x27;para&#x27;;
+    for (const [n, w] of BLOCK_W) { r -= w; if (r &lt;= 0) { name = n; break; } }
+    if (!NEEDS_H[name] || h &gt;= NEEDS_H[name]) return name;
+  }
+  return pick([&#x27;para&#x27;, &#x27;kv&#x27;, &#x27;matrix&#x27;, &#x27;barcode&#x27;]);
+}
+function renderSlot(s) {
+  const band = RO - R, h = s.hpx;
+  const c = document.createElement(&#x27;canvas&#x27;);
+  c.width = Math.ceil(band * RING_SC); c.height = Math.ceil((h + 2) * RING_SC);
+  const x = c.getContext(&#x27;2d&#x27;); x.scale(RING_SC, RING_SC); x.textBaseline = &#x27;top&#x27;;
+  const RB = rimW(), dz0 = RB + 6, dz1 = band * 0.72, oz0 = band * 0.78, oz1 = band - RB - 5;
+  const split = rnd() &lt; 0.45 &amp;&amp; dz1 - dz0 &gt; 60;
+  const blocks = [];
+  if (split) { const m = dz0 + (dz1 - dz0) * rr(0.42, 0.6); blocks.push([dz0, m], [m + rr(4, 8), dz1]); }
+  else blocks.push([dz0, dz1 - rr(0, 18)]);
+  for (const [b0, b1] of blocks) {
+    const tint = pick(TINTS), y0 = 1 + rr(0, 2), y1 = h + 1 - rr(0, 2);
+    x.save(); x.beginPath(); x.rect(b0, y0 - 0.5, b1 - b0, y1 - y0 + 1); x.clip();
+    BLOCKS[pickBlock(y1 - y0)](x, b0, b1, y0, y1, tint);
+    x.restore();
+  }
+  // outer index column: tiny ids + tick groups
+  const pitch = rr(8, 12);
+  x.font = `600 3.1px ${FONT}`;
+  for (let yy = rr(1, pitch); yy &lt; h - 2; yy += pitch) {
+    if (rnd() &lt; 0.15) continue;
+    let xx = oz0 + rr(0, 3);
+    if (rnd() &lt; 0.45) { x.fillStyle = `rgba(225,228,236,${rr(0.55, 0.95)})`; x.fillText(String((rnd() * 999) | 0).padStart(3, &#x27;0&#x27;), xx, yy - 1); xx += 9; }
+    const n = 1 + (rnd() * 3 | 0);
+    for (let i = 0; i &lt; n &amp;&amp; xx &lt; oz1; i++) { x.fillStyle = `rgba(225,228,236,${rr(0.5, 0.95)})`; x.fillRect(xx, yy, rr(1.2, 2.4), 1.2); xx += rr(2.4, 3.6); }
+  }
+  if (rnd() &lt; 0.45) {
+    x.fillStyle = &#x27;rgba(220,224,232,.7)&#x27;;
+    for (let xx = dz0; xx &lt; oz1; xx += rr(2.4, 4.5)) if (rnd() &lt; 0.8) x.fillRect(xx, h + 0.4, 1.1, 1.1);
+  }
+  s.c = c;
+}
+function rimW() { return Math.max(3, (RO - R) * 0.065 * C.rimWidth); }
+function drawRing(dt) {
+  const band = RO - R;
+  S.globalCompositeOperation = &#x27;source-over&#x27;;
+  S.save(); S.translate(cx, cy);
+  S.beginPath(); S.arc(0, 0, RO, 0, TAU); S.arc(0, 0, R, 0, TAU, true);
+  S.fillStyle = &#x27;#040506&#x27;; S.fill(&#x27;evenodd&#x27;);
+  let regen = 1;
+  for (const s of slots) {
+    const A = s.a + ringRot;
+    if (s.flash &gt; 0) s.flash = Math.max(0, s.flash - dt * 2.2);
+    const mid = R + band * 0.42;
+    const sp = toScreen(cx + Math.cos(A) * mid, cy + Math.sin(A) * mid);
+    if (sp.x &lt; -140 || sp.x &gt; W + 140 || sp.y &lt; -140 || sp.y &gt; H + 140) continue;
+    if (!s.c || (regen &gt; 0 &amp;&amp; rnd() &lt; 0.02)) { renderSlot(s); regen--; }
+    S.save(); S.rotate(A);
+    const hh = s.hpx + 2;
+    S.drawImage(s.c, R, -hh / 2, band, hh);
+    if (s.flash &gt; 0.02) { S.globalCompositeOperation = &#x27;lighter&#x27;; S.globalAlpha = s.flash; S.drawImage(s.c, R, -hh / 2, band, hh); S.globalAlpha = 1; S.globalCompositeOperation = &#x27;source-over&#x27;; }
+    S.restore();
+  }
+  // rulers &amp; rim bands (all rotate with the ring)
+  const tick = (step, fn) =&gt; {
+    const n0 = Math.floor((-thV - 0.05 - ringRot) / step), n1 = Math.ceil((thV + 0.05 - ringRot) / step);
+    for (let n = n0; n &lt;= n1; n++) { const a = n * step + ringRot; fn(Math.cos(a), Math.sin(a), n); }
+  };
+  const RB = rimW();
+  // inner + outer rim bands: dense white hairlines that give the edge its thickness
+  S.beginPath();
+  tick(0.14 / C.rimDensity * Math.PI / 180, (ca, sa, n) =&gt; {
+    const m = ((n % 6) + 6) % 6;
+    const li = m === 0 ? RB : RB * (0.5 + 0.35 * hash(n));
+    const lo = m === 0 ? RB : RB * (0.5 + 0.35 * hash(n + 77));
+    S.moveTo(ca * (R + 1.5), sa * (R + 1.5)); S.lineTo(ca * (R + 1.5 + li), sa * (R + 1.5 + li));
+    S.moveTo(ca * (RO - 1.5), sa * (RO - 1.5)); S.lineTo(ca * (RO - 1.5 - lo), sa * (RO - 1.5 - lo));
+  });
+  S.globalCompositeOperation = &#x27;lighter&#x27;;
+  S.strokeStyle = `rgba(232,235,242,${Math.min(1, 0.035 * C.rimBright * C.rimBright)})`; S.lineWidth = 1.2 + 2.4 * C.rimBright; S.stroke();   // glow grows with brightness
+  S.strokeStyle = `rgba(232,235,242,${Math.min(1, 0.08 * C.rimBright)})`; S.lineWidth = 1.4; S.stroke();
+  S.globalCompositeOperation = &#x27;source-over&#x27;; S.strokeStyle = `rgba(240,242,248,${Math.min(1, 0.88 * C.rimBright)})`; S.lineWidth = 0.55; S.stroke();
+  // rims
+  const arc = (r, lw, a) =&gt; { S.strokeStyle = `rgba(232,235,242,${a})`; S.lineWidth = lw; S.beginPath(); S.arc(0, 0, r, -thV, thV); S.stroke(); };
+  arc(R, 1.5, 1); arc(R + RB + 3, 0.6, 0.6); arc(RO - RB - 3, 0.6, 0.55);
+  S.globalCompositeOperation = &#x27;lighter&#x27;; arc(RO, 3.5, 0.1); S.globalCompositeOperation = &#x27;source-over&#x27;;
+  arc(RO, 1.3, 0.95);
+  S.beginPath();
+  tick(1 * Math.PI / 180, (ca, sa) =&gt; { S.moveTo(ca * (R - 2), sa * (R - 2)); S.lineTo(ca * (R - 5), sa * (R - 5)); });
+  tick(0.25 * Math.PI / 180, (ca, sa, n) =&gt; {
+    const m = ((n % 20) + 20) % 20, L = m === 0 ? 9 : m % 5 === 0 ? 5 : 2.5;
+    S.moveTo(ca * (RO + 2), sa * (RO + 2)); S.lineTo(ca * (RO + 2 + L), sa * (RO + 2 + L));
+  });
+  S.strokeStyle = &#x27;rgba(230,233,240,.5)&#x27;; S.lineWidth = 0.6; S.stroke();
+  S.restore();
+}
+
+/* ---------- frame ---------- */
+function drawStage(dt) {
+  updateBeat(dt); updateCam(dt); updateOuter(dt);
+  if (rnd() &lt; dt * C.cometTrickle) spawnComet();
+  webRot += dt * (0.03 + env * 0.12) * C.webSpin;
+  updateRing(dt);
+  for (let k = 0; k &lt; 3; k++) layerEnv[k] *= Math.exp(-dt * 2.2);
+
+  // background
+  S.setTransform(DPR, 0, 0, DPR, 0, 0);
+  S.globalCompositeOperation = &#x27;source-over&#x27;; S.globalAlpha = 1;
+  S.fillStyle = &#x27;#08090b&#x27;; S.fillRect(0, 0, W, H);
+
+  // glow buffer (low-res, blurred later)
+  const G = glowC.x;
+  G.setTransform(1, 0, 0, 1, 0, 0); G.clearRect(0, 0, glowC.width, glowC.height);
+  camT(G, 1 / GS); G.globalCompositeOperation = &#x27;lighter&#x27;;
+
+  camTk(S, DPR, 1 - 0.1 * C.parallax);   // the web sits a little further back
+
+  // inner web + pulsing layers
+  S.save(); S.translate(cx, cy); S.rotate(webRot);
+  const ws = 2 * R + 4;
+  S.drawImage(webBase, -R - 2, -R - 2, ws, ws);
+  S.globalCompositeOperation = &#x27;lighter&#x27;;
+  webLayers.forEach((c, k) =&gt; { S.globalAlpha = Math.min(1, C.webPulseBase + C.webPulseAmp * layerEnv[k]); S.drawImage(c, -R - 2, -R - 2, ws, ws); });
+  S.globalAlpha = 1;
+
+  // runners: speed surges on the beat
+  const tx = trailC.x, surge = 0.5 + 2.5 * env;
+  while (runners.length &lt; C.runnerCount) runners.push(newRunner(true));
+  if (runners.length &gt; C.runnerCount) runners.length = Math.max(0, Math.round(C.runnerCount));
+  tx.globalCompositeOperation = &#x27;destination-out&#x27;;
+  tx.fillStyle = `rgba(0,0,0,${0.05 + env * 0.05})`; tx.fillRect(0, 0, ws, ws);
+  tx.globalCompositeOperation = &#x27;source-over&#x27;;
+  tx.save(); tx.translate(R + 2, R + 2); tx.lineCap = &#x27;round&#x27;;
+  for (let i = 0; i &lt; runners.length; i++) {
+    const r = runners[i];
+    r.t += dt * C.runnerSpeed * (r.mode === 1 ? r.sp * surge : r.mode === 2 ? r.sp + 1.3 * r.t * r.t : r.sp);
+    if (r.t &gt;= 1) { runners[i] = newRunner(false); continue; }
+    const p = qpt(r.cv, r.t);
+    tx.strokeStyle = r.b ? `rgba(240,166,198,${Math.min(1, 0.9 * C.runnerBright)})` : `rgba(250,251,255,${Math.min(1, 0.75 * C.runnerBright)})`;
+    tx.lineWidth = (r.b ? 1.3 : 0.9) * C.runnerWidth;
+    tx.beginPath(); tx.moveTo(r.px, r.py); tx.lineTo(p.x, p.y); tx.stroke();
+    r.px = p.x; r.py = p.y;
+  }
+  tx.restore();
+  S.drawImage(trailC, -R - 2, -R - 2, ws, ws);
+  S.restore();
+  camT(S, DPR);
+  // ring occlusion: the web darkens toward the ring, separating the two planes
+  if (C.ringShadow &gt; 0) {
+    const sg = S.createRadialGradient(cx, cy, R - 110, cx, cy, R);
+    sg.addColorStop(0, &#x27;rgba(4,5,6,0)&#x27;); sg.addColorStop(1, `rgba(4,5,6,${Math.min(1, 0.8 * C.ringShadow)})`);
+    S.globalCompositeOperation = &#x27;source-over&#x27;; S.globalAlpha = 1; S.fillStyle = sg;
+    S.beginPath(); S.arc(cx, cy, R, 0, TAU); S.arc(cx, cy, R - 110, 0, TAU, true); S.fill(&#x27;evenodd&#x27;);
+  }
+
+  // comets
+  S.save(); S.translate(cx, cy); S.globalCompositeOperation = &#x27;lighter&#x27;; S.lineCap = &#x27;round&#x27;;
+  G.save(); G.translate(cx, cy);
+  for (let i = comets.length - 1; i &gt;= 0; i--) {
+    const c = comets[i];
+    c.life += dt;
+    const p = easeIO(Math.min(1, c.life / c.dur));
+    const head = Math.min(1, p * (1 + c.win)), tail = Math.max(0, p * (1 + c.win) - c.win);
+    const fade = c.life &gt; c.dur ? Math.max(0, 1 - (c.life - c.dur) / 0.25) : 1;
+    if (fade &lt;= 0) { comets.splice(i, 1); continue; }
+    const cr = C.cometFollow ? ringRot - c.rot0 : 0;
+    if (head &gt;= 1 &amp;&amp; !c.hit) { c.hit = true; const pe = cpt(c.lines[c.lines.length &gt;&gt; 1], 1); flashSlotAt(Math.atan2(pe.y, pe.x) + cr); }
+    S.save(); S.rotate(cr); G.save(); G.rotate(cr);
+    const col = c.tint ? &#x27;200,190,250&#x27; : &#x27;255,255,255&#x27;;
+    S.strokeStyle = `rgba(${col},${Math.min(1, 0.5 * fade * C.cometBright)})`; S.lineWidth = 1;
+    strokeComet(S, c, tail, head, 18);
+    const hs = head - (head - tail) * 0.35;
+    S.strokeStyle = `rgba(${col},${Math.min(1, fade * C.cometBright)})`; S.lineWidth = 1.7;
+    strokeComet(S, c, hs, head, 8);
+    if (c.glow &amp;&amp; C.cometGlow &gt; 0) { G.strokeStyle = `rgba(${col},${Math.min(1, 0.5 * fade * C.cometGlow)})`; G.lineWidth = 2.8; strokeComet(G, c, hs, head, 6); }
+    G.restore(); S.restore();
+  }
+  G.restore();
+  S.restore();
+
+  // outer wedges
+  S.globalCompositeOperation = &#x27;lighter&#x27;;
+  S.drawImage(laneC, 0, 0, W, H);
+  // far outer layers 鈫?half-res buffer, composited blurred (depth of field)
+  const F = farC.x;
+  F.setTransform(1, 0, 0, 1, 0, 0); F.globalAlpha = 1; F.globalCompositeOperation = &#x27;source-over&#x27;; F.clearRect(0, 0, farC.width, farC.height);
+  camT(F, FS); F.globalCompositeOperation = &#x27;lighter&#x27;;
+  S = F; drawOuterFar(); S = S_MAIN;
+  S.save(); S.setTransform(DPR, 0, 0, DPR, 0, 0); S.globalCompositeOperation = &#x27;lighter&#x27;;
+  if (HAS_FILTER &amp;&amp; C.depthBlur &gt; 0) S.filter = `blur(${C.depthBlur}px)`;
+  S.globalAlpha = Math.min(1, C.depthDim); S.drawImage(farC, 0, 0, W, H);
+  S.restore();
+  // atmosphere: faint scattered light just beyond the ring
+  if (C.atmos &gt; 0) {
+    const ag = S.createRadialGradient(cx, cy, RO, cx, cy, RO + (RMAX - RO) * 0.7);
+    ag.addColorStop(0, `rgba(190,180,240,${Math.min(1, 0.07 * C.atmos)})`); ag.addColorStop(0.4, `rgba(150,145,210,${Math.min(1, 0.028 * C.atmos)})`); ag.addColorStop(1, &#x27;rgba(0,0,0,0)&#x27;);
+    S.globalAlpha = 1; S.fillStyle = ag; S.beginPath(); S.arc(cx, cy, RMAX, 0, TAU); S.arc(cx, cy, RO, 0, TAU, true); S.fill(&#x27;evenodd&#x27;);
+  }
+  drawOuterNear();
+
+  drawRing(dt);
+
+  // composite soft glow
+  S.setTransform(DPR, 0, 0, DPR, 0, 0);
+  S.globalCompositeOperation = &#x27;lighter&#x27;;
+  if (HAS_FILTER) S.filter = &#x27;blur(6px)&#x27;;
+  S.globalAlpha = Math.min(1, 0.9 * C.glow);
+  S.drawImage(glowC, 0, 0, glowC.width * GS, glowC.height * GS);
+  if (HAS_FILTER) S.filter = &#x27;none&#x27;;
+  S.globalAlpha = 1; S.globalCompositeOperation = &#x27;source-over&#x27;;
+
+  drawBokeh(dt);
+  if (C.vignette &gt; 0) {
+    S.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const vg = S.createRadialGradient(W * 0.45, H * 0.5, Math.min(W, H) * 0.35, W * 0.45, H * 0.5, Math.hypot(W, H) * 0.62);
+    vg.addColorStop(0, &#x27;rgba(0,0,0,0)&#x27;); vg.addColorStop(1, `rgba(0,0,0,${Math.min(1, 0.75 * C.vignette)})`);
+    S.fillStyle = vg; S.fillRect(0, 0, W, H);
+  }
+
+  drawCallout();
+}
+
+/* ---------- callout box with leader line (follows the camera) ---------- */
+const CHECKS = [[&#x27;STABILITY CHECK&#x27;, &#x27;CFL = |u| Δt / Δx&#x27;], [&#x27;MASS CONSERVATION&#x27;, &#x27;Σ ρ dV = const&#x27;], [&#x27;RESIDUAL NORM&#x27;, &#x27;r = ‖b − A·u‖₂&#x27;],
+  [&#x27;BOUNDARY&#x27;, &#x27;u · n = 0  on ∂Ω&#x27;], [&#x27;PROJECTION&#x27;, &#x27;∇²p = ∇ · u* / Δt&#x27;]];
+let chkI = 0;
+const chkEl = document.getElementById(&#x27;chk&#x27;);
+function drawCallout() {
+  const a = -thS * 0.32;
+  const anchor = toScreen(cx + Math.cos(a) * (RO + 30), cy + Math.sin(a) * (RO + 30));
+  const box = toScreen(cx + Math.cos(a) * (RO + 30) + 120, cy + Math.sin(a) * (RO + 30) - 40);
+  const bx = Math.min(W - 190, Math.max(8, box.x)), by = Math.min(H - 60, Math.max(40, box.y));
+  chkEl.style.transform = `translate(${bx}px,${by}px)`;
+  S.strokeStyle = &#x27;rgba(230,233,238,.55)&#x27;; S.lineWidth = 0.8;
+  S.beginPath(); S.moveTo(anchor.x, anchor.y); S.lineTo(bx, by + 12); S.stroke();
+  S.fillStyle = &#x27;#fff&#x27;; S.fillRect(anchor.x - 1.5, anchor.y - 1.5, 3, 3);
+}
+setInterval(() =&gt; {
+  chkEl.style.opacity = 0;
+  setTimeout(() =&gt; {
+    chkI = (chkI + 1) % CHECKS.length;
+    document.getElementById(&#x27;chkK&#x27;).textContent = CHECKS[chkI][0];
+    document.getElementById(&#x27;chkV&#x27;).textContent = CHECKS[chkI][1];
+    chkEl.style.opacity = 1;
+  }, 400);
+}, 3600);
+
+/* =========================================================
+   HEADER KPIs
+   ========================================================= */
+const segs = document.querySelectorAll(&#x27;.kpi .seg i&#x27;);
+function kpiTick() {
+  segs.forEach(s =&gt; s.style.width = rr(25, 100) + &#x27;%&#x27;);
+  const m = 5 + (rnd() * 6 | 0);
+  document.getElementById(&#x27;stBig&#x27;).textContent = `${m} / 11 METHODS · ${11 - m} PENDING`;
+}
+kpiTick(); setInterval(kpiTick, 2600);
+
+/* =========================================================
+   PANELS
+   ========================================================= */
+// --- investigation feed ---
+const ACTS = [&#x27;extract governing equation&#x27;, &#x27;prepare clean checkout&#x27;, &#x27;load shared reference scene&#x27;, &#x27;implement independent method&#x27;,
+  &#x27;review numerical stability&#x27;, &#x27;check mass conservation&#x27;, &#x27;record boundary conditions&#x27;, &#x27;attach source page links&#x27;,
+  &#x27;compare reference outputs&#x27;, &#x27;retain missing details&#x27;, &#x27;package clean checkout&#x27;, &#x27;validate sample buffer&#x27;,
+  &#x27;diff against reference scene&#x27;, &#x27;resolve ambiguous notation&#x27;, &#x27;reproduce figure 3&#x27;, &#x27;sweep timestep sensitivity&#x27;];
+const VERBS = [&#x27;build&#x27;, &#x27;check&#x27;, &#x27;read&#x27;, &#x27;qa&#x27;, &#x27;build&#x27;, &#x27;check&#x27;];
+const feed = document.getElementById(&#x27;feed&#x27;);
+let feedN = 37;
+function feedPush() {
+  const v = pick(VERBS), d = document.createElement(&#x27;div&#x27;);
+  d.innerHTML = `&lt;span class=&quot;n&quot;&gt;${String(feedN++).padStart(3, &#x27;0&#x27;)}&lt;/span&gt;&lt;span class=&quot;vb ${v}&quot;&gt;${v}&lt;/span&gt;${pick(ACTS)}`;
+  feed.appendChild(d);
+  while (feed.children.length &gt; 14) feed.removeChild(feed.firstChild);
+}
+for (let i = 0; i &lt; 12; i++) feedPush();
+setInterval(feedPush, 650);
+
+// --- method workspace (typing) ---
+const CODE = [[&#x27;papers&#x27;, &#x27;load_collection&#x27;, &#x27;()&#x27;], [&#x27;eqs&#x27;, &#x27;extract_equations&#x27;, &#x27;(papers)&#x27;], [&#x27;inputs&#x27;, &#x27;shared_scene&#x27;, &#x27;()&#x27;],
+  [&#x27;state&#x27;, &#x27;method.step&#x27;, &#x27;(inputs)&#x27;], [&#x27;&#x27;, &#x27;check_mass&#x27;, &#x27;(state, reference)&#x27;], [&#x27;&#x27;, &#x27;check_stability&#x27;, &#x27;(state)&#x27;],
+  [&#x27;&#x27;, &#x27;compare_reference&#x27;, &#x27;(state)&#x27;], [&#x27;&#x27;, &#x27;attach_page_refs&#x27;, &#x27;(eqs)&#x27;], [&#x27;&#x27;, &#x27;retain_missing_details&#x27;, &#x27;()&#x27;],
+  [&#x27;&#x27;, &#x27;package_clean_checkout&#x27;, &#x27;()&#x27;]];
+const codeEl = document.getElementById(&#x27;code&#x27;);
+let cLine = 0, cChar = 0, cNum = 7, typed = [];
+const codeStr = l =&gt; (l[0] ? l[0] + &#x27; = &#x27; : &#x27;&#x27;) + l[1] + l[2];
+function codeHtml(l, n) {
+  const pre = l[0] ? l[0] + &#x27; = &#x27; : &#x27;&#x27;, full = pre + l[1] + l[2];
+  n = n == null ? full.length : n;
+  let out = &#x27;&#x27;, i = 0;
+  const seg = (s, cls) =&gt; { const take = Math.max(0, Math.min(s.length, n - i)); if (take) out += `&lt;span class=&quot;${cls}&quot;&gt;${s.slice(0, take)}&lt;/span&gt;`; i += s.length; };
+  seg(pre, &#x27;op&#x27;); seg(l[1], &#x27;fn&#x27;); seg(l[2], &#x27;op&#x27;);
+  return out;
+}
+function codeTick() {
+  const l = CODE[cLine];
+  cChar += 2;
+  if (cChar &gt; codeStr(l).length + 6) {
+    typed.push(`&lt;div&gt;&lt;span class=&quot;ln&quot;&gt;${String(cNum++).padStart(3, &#x27;0&#x27;)}&lt;/span&gt;${codeHtml(l)}&lt;/div&gt;`);
+    if (typed.length &gt; 12) typed.shift();
+    cLine = (cLine + 1) % CODE.length; cChar = 0;
+  }
+  codeEl.innerHTML = typed.join(&#x27;&#x27;) + `&lt;div&gt;&lt;span class=&quot;ln&quot;&gt;${String(cNum).padStart(3, &#x27;0&#x27;)}&lt;/span&gt;${codeHtml(CODE[cLine], cChar)}&lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;&lt;/div&gt;`;
+}
+setInterval(codeTick, 70);
+
+// --- routes ---
+const ROUTES = [&#x27;navier-st&#x27;, &#x27;settings&#x27;, &#x27;lbm-d2q9&#x27;, &#x27;stam-fluid&#x27;, &#x27;page refs&#x27;, &#x27;missing&#x27;];
+const COLSR = [&#x27;extract&#x27;, &#x27;attach&#x27;, &#x27;inspect&#x27;];
+const routesEl = document.getElementById(&#x27;routes&#x27;);
+const rState = ROUTES.map(() =&gt; (rnd() * 4) | 0);
+function renderRoutes() {
+  let h = &#x27;&lt;span class=&quot;h&quot;&gt;PAPER&lt;/span&gt;&lt;span class=&quot;h&quot;&gt;EXTRACT&lt;/span&gt;&lt;span class=&quot;h&quot;&gt;CODE&lt;/span&gt;&lt;span class=&quot;h&quot;&gt;CHECK&lt;/span&gt;&#x27;;
+  ROUTES.forEach((n, i) =&gt; {
+    h += `&lt;span class=&quot;nm&quot;&gt;${n}&lt;/span&gt;`;
+    COLSR.forEach((c, j) =&gt; {
+      const st = rState[i];
+      const cls = j &lt; st ? &#x27;done&#x27; : j === st ? (i === 5 ? &#x27;pk&#x27; : &#x27;on&#x27;) : &#x27;&#x27;;
+      h += `&lt;span&gt;&lt;span class=&quot;chip ${cls}&quot;&gt;${c}&lt;/span&gt;&lt;/span&gt;`;
+    });
+  });
+  routesEl.innerHTML = h;
+}
+setInterval(() =&gt; { const i = (rnd() * ROUTES.length) | 0; rState[i] = (rState[i] + 1) % 4; renderRoutes(); }, 500);
+renderRoutes();
+
+// --- agents ---
+const ROLES = [&#x27;read&#x27;, &#x27;build&#x27;, &#x27;review&#x27;, &#x27;qa&#x27;];
+const AG = Array.from({ length: 12 }, (_, i) =&gt; ({ id: String(i + 1).padStart(2, &#x27;0&#x27;), role: ROLES[i % 4], p: rnd() * 8, sp: rr(0.6, 2), st: &#x27;working&#x27; }));
+const agEl = document.getElementById(&#x27;agents&#x27;);
+const ROLE_COL = { read: &#x27;#98e0cf&#x27;, build: &#x27;#f0a6c6&#x27;, review: &#x27;#d7dae0&#x27;, qa: &#x27;#f0a6c6&#x27; };
+agEl.innerHTML = AG.map(a =&gt; `&lt;div class=&quot;ag&quot;&gt;&lt;span class=&quot;id&quot;&gt;${a.id}&lt;/span&gt;&lt;span class=&quot;rl&quot;&gt;${a.role}&lt;/span&gt;&lt;span class=&quot;cells&quot;&gt;${&#x27;&lt;i&gt;&lt;/i&gt;&#x27;.repeat(6)}&lt;/span&gt;&lt;span class=&quot;st&quot;&gt;&lt;/span&gt;&lt;/div&gt;`).join(&#x27;&#x27;);
+const agRows = [...agEl.children];
+function agentsTick(dt) {
+  AG.forEach((a, i) =&gt; {
+    a.p += a.sp * dt;
+    if (a.p &gt; 9) { a.p = 0; a.sp = rr(0.6, 2); }
+    const done = Math.floor(a.p);
+    const cells = agRows[i].children[2].children;
+    for (let k = 0; k &lt; 6; k++) cells[k].style.background = k &lt; done ? ROLE_COL[a.role] : k === done ? &#x27;#5a5e66&#x27; : &#x27;#1d1f24&#x27;;
+    const st = a.p &lt; 0.6 ? &#x27;dispatch&#x27; : a.p &gt; 6 ? &#x27;idle&#x27; : &#x27;working&#x27;;
+    const se = agRows[i].children[3];
+    if (se.textContent !== st) { se.textContent = st; se.className = &#x27;st&#x27; + (st === &#x27;working&#x27; ? &#x27; w&#x27; : &#x27;&#x27;); }
+  });
+}
+
+// --- canvases ---
+const cAdv = document.getElementById(&#x27;cAdv&#x27;), cDiff = document.getElementById(&#x27;cDiff&#x27;), cVal = document.getElementById(&#x27;cVal&#x27;), cIdx = document.getElementById(&#x27;cIdx&#x27;);
+let advP = [];
+function resizePanels() {
+  [cAdv, cDiff, cVal, cIdx].forEach(fit);
+  advP = Array.from({ length: 320 }, () =&gt; ({ x: rnd() * cAdv.w, y: rnd() * cAdv.h, l: rnd() * 3 }));
+  valBuf = [[], [], []];
+}
+let T = 0;
+const flow = (x, y) =&gt; Math.sin(x * 0.035 + T * 0.6) * Math.cos(y * 0.05 - T * 0.4) * Math.PI + Math.sin((x + y) * 0.01 + T * 0.2);
+function drawAdv(dt) {
+  const x = cAdv.x, w = cAdv.w, h = cAdv.h;
+  x.fillStyle = &#x27;rgba(14,15,18,0.22)&#x27;; x.fillRect(0, 0, w, h);
+  x.fillStyle = &#x27;rgba(120,125,135,.25)&#x27;;
+  for (let i = 6; i &lt; w; i += 12) for (let j = 6; j &lt; h; j += 12) x.fillRect(i, j, 1, 1);
+  x.strokeStyle = &#x27;rgba(235,238,244,.7)&#x27;; x.lineWidth = 0.8; x.beginPath();
+  for (const p of advP) {
+    const a = flow(p.x, p.y), nx = p.x + Math.cos(a) * 22 * dt, ny = p.y + Math.sin(a) * 22 * dt;
+    x.moveTo(p.x, p.y); x.lineTo(nx + Math.cos(a) * 2, ny + Math.sin(a) * 2);
+    p.x = nx; p.y = ny; p.l -= dt;
+    if (p.l &lt; 0 || p.x &lt; 0 || p.x &gt; w || p.y &lt; 0 || p.y &gt; h) { p.x = rnd() * w; p.y = rnd() * h; p.l = rr(1, 4); }
+  }
+  x.stroke();
+}
+setInterval(() =&gt; { const b = document.querySelectorAll(&#x27;#advBtns span&#x27;); const i = [...b].findIndex(s =&gt; s.classList.contains(&#x27;on&#x27;)); b[i].classList.remove(&#x27;on&#x27;); b[(i + 1) % 3].classList.add(&#x27;on&#x27;); }, 1400);
+
+function drawDiff() {
+  const x = cDiff.x, w = cDiff.w, h = cDiff.h;
+  x.clearRect(0, 0, w, h);
+  x.font = `600 7px ${FONT}`; x.textBaseline = &#x27;top&#x27;;
+  const gap = 8, mw = (w - gap) / 2, mh = h * 0.68, cols = 22, rows = 13, cw = mw / cols, ch = (mh - 10) / rows;
+  const hist = new Array(28).fill(0);
+  for (let m = 0; m &lt; 2; m++) {
+    const ox = m * (mw + gap);
+    x.fillStyle = &#x27;#6b6f78&#x27;; x.fillText(m ? &#x27;IMPLEMENTATION&#x27; : &#x27;REFERENCE&#x27;, ox, 0);
+    for (let j = 0; j &lt; rows; j++) for (let i = 0; i &lt; cols; i++) {
+      let v = 0.5 + 0.25 * Math.sin(i * 0.45 + T * 0.8) * Math.cos(j * 0.5 - T * 0.5) + 0.2 * Math.sin((i + j) * 0.3 + T);
+      let err = 0;
+      if (m) { const dx = i - 15 - Math.sin(T * 0.7) * 3, dy = j - 6; err = Math.exp(-(dx * dx + dy * dy) / 6) * (0.5 + 0.5 * Math.sin(T * 2)); v += err * 0.3; hist[Math.min(27, (err * 27) | 0)]++; }
+      const g = Math.max(0, Math.min(255, v * 210 + 20)) | 0;
+      x.fillStyle = err &gt; 0.35 ? `rgba(240,166,198,${0.5 + err * 0.5})` : `rgb(${g},${g},${g + 4})`;
+      x.fillRect(ox + i * cw, 10 + j * ch, cw - 0.6, ch - 0.6);
+    }
+  }
+  const by = mh + 4, bh = h - by, bw = w / hist.length;
+  const mx = Math.max(...hist.slice(1), 1);
+  hist.forEach((v, i) =&gt; {
+    const hh = i === 0 ? bh * 0.9 : (v / mx) * bh * 0.8 + 1;
+    x.fillStyle = i &gt; 9 ? &#x27;#f0a6c6&#x27; : &#x27;#8a8e97&#x27;;
+    x.fillRect(i * bw, by + bh - hh, bw - 1, hh);
+  });
+}
+
+let valBuf = [[], [], []], valSpike = 0;
+function drawVal() {
+  const x = cVal.x, w = cVal.w, h = cVal.h;
+  x.clearRect(0, 0, w, h);
+  const lw = 58, n = Math.floor((w - lw) / 2), names = [&#x27;MASS&#x27;, &#x27;STABILITY&#x27;, &#x27;RESIDUAL&#x27;];
+  if (rnd() &lt; 0.01) valSpike = 1;
+  valSpike *= 0.9;
+  const vals = [Math.sin(T * 3) * 0.35 + Math.sin(T * 7.3) * 0.15 + gauss() * 0.06,
+    Math.sin(T * 5 + 1) * 0.3 + Math.sin(T * 1.3) * 0.25 + gauss() * 0.08,
+    Math.sin(T * 2.2) * 0.2 + gauss() * 0.15 + (rnd() &lt; 0.5 ? 1 : -1) * valSpike * 0.9];
+  vals.forEach((v, k) =&gt; { valBuf[k].push(v); while (valBuf[k].length &gt; n) valBuf[k].shift(); });
+  x.font = `800 7px ${FONT}`; x.textBaseline = &#x27;middle&#x27;;
+  const rh = h / 3;
+  for (let k = 0; k &lt; 3; k++) {
+    const yc = rh * k + rh / 2;
+    x.fillStyle = &#x27;#9a9ea7&#x27;; x.fillText(names[k], 0, yc);
+    x.strokeStyle = &#x27;#1f2227&#x27;; x.lineWidth = 1; x.beginPath(); x.moveTo(lw, yc); x.lineTo(w, yc); x.stroke();
+    x.strokeStyle = k === 1 &amp;&amp; valSpike &gt; 0.2 ? &#x27;#f0a6c6&#x27; : &#x27;#e6e8ec&#x27;; x.lineWidth = 1.1;
+    x.beginPath();
+    valBuf[k].forEach((v, i) =&gt; { const px = lw + i * 2, py = yc - v * rh * 0.45; i ? x.lineTo(px, py) : x.moveTo(px, py); });
+    x.stroke();
+  }
+  const cxr = lw + valBuf[0].length * 2;
+  x.strokeStyle = &#x27;rgba(240,166,198,.6)&#x27;; x.beginPath(); x.moveTo(cxr, 0); x.lineTo(cxr, h); x.stroke();
+}
+
+const IDX = Array.from({ length: 11 }, () =&gt; Array.from({ length: 28 }, () =&gt; rnd()));
+function drawIdx() {
+  const x = cIdx.x, w = cIdx.w, h = cIdx.h;
+  x.clearRect(0, 0, w, h);
+  x.font = `600 6.5px ${FONT}`; x.textBaseline = &#x27;middle&#x27;;
+  const lx = 24, rx = 34, rows = 11, cols = 28, cw = (w - lx - rx) / cols, ch = h / rows;
+  const scan = Math.floor((T * 6) % cols);
+  if (rnd() &lt; 0.3) { const r = (rnd() * rows) | 0, c = (rnd() * cols) | 0; IDX[r][c] = rnd(); }
+  for (let j = 0; j &lt; rows; j++) {
+    x.fillStyle = &#x27;#6b6f78&#x27;; x.fillText(&#x27;M&#x27; + String(j + 1).padStart(2, &#x27;0&#x27;), 0, j * ch + ch / 2);
+    let match = 0;
+    for (let i = 0; i &lt; cols; i++) {
+      const v = IDX[j][i];
+      x.fillStyle = v &gt; 0.86 ? &#x27;#f0a6c6&#x27; : v &gt; 0.7 ? &#x27;rgba(240,166,198,.45)&#x27; : v &gt; 0.4 ? &#x27;#4a4e56&#x27; : &#x27;#1c1e23&#x27;;
+      if (i === scan) x.fillStyle = v &gt; 0.4 ? &#x27;#ffffff&#x27; : &#x27;#3a3e46&#x27;;
+      x.fillRect(lx + i * cw, j * ch + 1, cw - 1, ch - 2);
+      if (v &gt; 0.7) match++;
+    }
+    x.fillStyle = match &gt; 7 ? &#x27;#f0a6c6&#x27; : &#x27;#9a9ea7&#x27;;
+    x.fillText(match &gt; 7 ? &#x27;review&#x27; : &#x27;match&#x27;, w - rx + 4, j * ch + ch / 2);
+  }
+}
+
+/* =========================================================
+   LOOP
+   ========================================================= */
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now; T += dt;
+  drawStage(dt);
+  drawAdv(dt); drawDiff(); drawVal(); drawIdx(); agentsTick(dt);
+  requestAnimationFrame(frame);
+}
+let rzT, ready = false, started = false;
+function resizeAll() {
+  const r = stage.getBoundingClientRect();
+  if (r.width &lt; 20 || r.height &lt; 20) { ready = false; return; }
+  DPR = Math.min(window.devicePixelRatio || 1, 2); resizeStage(); resizePanels(); ready = true;
+  if (!started) { started = true; last = performance.now(); requestAnimationFrame(frame); }
+}
+const origFrame = frame;
+frame = function frame(now) {
+  if (window.__wpPaused) { last = now; requestAnimationFrame(frame); return; }
+  if (ready) origFrame(now); else { last = now; requestAnimationFrame(frame); }
+};
+new ResizeObserver(() =&gt; { clearTimeout(rzT); rzT = setTimeout(resizeAll, 120); }).observe(document.getElementById(&#x27;stageWrap&#x27;));
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(resizeAll);
+
+// fullscreen: double-click anywhere or press F
+function toggleFS() {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen().catch(() =&gt; {});
+}
+document.addEventListener(&#x27;dblclick&#x27;, toggleFS);
+
+
+/* =========================================================
+   CONSOLE — live tuning panel (click CONSOLE or press C)
+   ========================================================= */
+const LS_KEY = &#x27;paperlab.cfg.v2&#x27;;
+let curPreset = &#x27;B&#x27;;
+function lsGet() { try { return JSON.parse(localStorage.getItem(LS_KEY) || &#x27;null&#x27;); } catch (e) { return null; } }
+function lsSet(v) { try { localStorage.setItem(LS_KEY, JSON.stringify(v)); } catch (e) {} }
+function saveCfg() { lsSet({ preset: curPreset, values: { ...C } }); }
+const MINE_KEY = LS_KEY.replace(&#x27;cfg&#x27;, &#x27;mine&#x27;);
+try { const m = JSON.parse(localStorage.getItem(MINE_KEY) || &#x27;null&#x27;); if (m) PRESETS.MINE = { ...BASE, ...(BAKED_MINE || {}), ...m }; } catch (e) {}
+
+const rebuildQ = new Set();
+let rebuildT;
+function applyRebuilds() {
+  if (!ready) return;
+  if (rebuildQ.has(&#x27;resize&#x27;)) { resizeAll(); rebuildQ.clear(); return; }
+  if (rebuildQ.has(&#x27;web&#x27;)) buildWeb();
+  if (rebuildQ.has(&#x27;slots&#x27;)) slots.forEach(s =&gt; s.c = null);
+  if (rebuildQ.has(&#x27;flyers&#x27;)) initFlyers();
+  rebuildQ.clear();
+}
+function setParam(k, v, silent) {
+  C[k] = v;
+  if (k === &#x27;scan&#x27;) document.body.classList.toggle(&#x27;noscan&#x27;, !v);
+  const p = PARAMS.find(p =&gt; p[0] === k);
+  if (p &amp;&amp; p[6]) { rebuildQ.add(p[6]); clearTimeout(rebuildT); rebuildT = setTimeout(applyRebuilds, 250); }
+  if (!silent) saveCfg();
+}
+function loadPreset(name, values) {
+  curPreset = name;
+  const src = values || PRESETS[name] || BASE;
+  for (const k in BASE) setParam(k, src[k] != null ? src[k] : BASE[k], true);
+  rebuildQ.add(&#x27;web&#x27;); rebuildQ.add(&#x27;flyers&#x27;); rebuildQ.add(&#x27;slots&#x27;); rebuildQ.add(&#x27;resize&#x27;);
+  clearTimeout(rebuildT); rebuildT = setTimeout(applyRebuilds, 50);
+  saveCfg(); syncPanel();
+}
+
+function syncPanel() {
+  panel.querySelectorAll(&#x27;.row&#x27;).forEach(r =&gt; {
+    const k = r.dataset.k, v = C[k];
+    r.children[1].value = v; r.children[2].value = v;
+    r.classList.toggle(&#x27;chg&#x27;, Math.abs(v - PRESETS[curPreset][k]) &gt; 1e-9);
+  });
+  panel.querySelectorAll(&#x27;[data-p]&#x27;).forEach(b =&gt; b.classList.toggle(&#x27;on&#x27;, b.dataset.p === curPreset));
+}
+// ---- initial state: ?preset=a|b in the URL wins, otherwise the last saved session ----
+(function initCfg() {
+  const q = (new URLSearchParams(location.search).get(&#x27;preset&#x27;) || &#x27;&#x27;).toUpperCase();
+  const saved = lsGet();
+  const name = PRESETS[q] ? q : saved &amp;&amp; PRESETS[saved.preset] ? saved.preset : PRESETS.MINE ? &#x27;MINE&#x27; : &#x27;B&#x27;;
+  curPreset = name;
+  const src = saved &amp;&amp; saved.preset === name ? { ...PRESETS[name], ...saved.values } : PRESETS[name];
+  for (const k in PRESETS[name]) setParam(k, src[k], true);
+  /* wallpaper: 无面板 */
+})();
+
+/* =========================================================
+   BGM — background music (button / M key toggles, slider sets volume)
+   Browsers block audible autoplay, so music starts on the first tap / click / key
+   if it could not start on load. iOS ignores &lt;audio&gt;.volume, so there the level
+   is driven through a Web Audio GainNode (http/https only).
+   ========================================================= */
+(function initBGM() {
+  const KEY = &#x27;haloflux.bgm.v1&#x27;;
+  const noop = () =&gt; {};
+  const au = document.getElementById(&#x27;bgmAudio&#x27;);
+  const box = { classList: { toggle: noop, remove: noop, add: noop }, contains: () =&gt; false, addEventListener: noop };
+  const txt = { textContent: &#x27;&#x27; };
+  const vol = { value: 60, addEventListener: noop };
+  const val = { textContent: &#x27;&#x27; };
+  const TOUCH = matchMedia(&#x27;(pointer: coarse)&#x27;).matches;
+  au.src = au.dataset.src;
+  au.setAttribute(&#x27;playsinline&#x27;, &#x27;&#x27;);
+  let st = { on: true, vol: 60 };
+  try { st = { ...st, ...(JSON.parse(localStorage.getItem(KEY) || &#x27;null&#x27;) || {}) }; } catch (e) {}
+  const save = () =&gt; { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} };
+  try { if (navigator.audioSession) navigator.audioSession.type = &#x27;playback&#x27;; } catch (e) {}   // iOS: play even with the silent switch on
+
+  // volume path: element volume, or a GainNode where element volume is read-only (iOS)
+  const roVolume = (() =&gt; { try { au.volume = 0.5; const ro = Math.abs(au.volume - 0.5) &gt; 0.01; au.volume = 1; return ro; } catch (e) { return true; } })();
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const useWA = roVolume &amp;&amp; !!AC &amp;&amp; /^https?:$/.test(location.protocol);
+  let ctx = null, gain = null;
+  function graph() {
+    if (!useWA || ctx) return;
+    try {
+      ctx = new AC(); gain = ctx.createGain(); gain.gain.value = 0;
+      ctx.createMediaElementSource(au).connect(gain); gain.connect(ctx.destination);
+    } catch (e) { ctx = null; gain = null; }
+  }
+  const getV = () =&gt; gain ? gain.gain.value : au.volume;
+  const setV = v =&gt; { v = Math.max(0, Math.min(1, v)); if (gain) gain.gain.value = v; else au.volume = v; };
+  const target = () =&gt; Math.pow(st.vol / 100, 1.6);
+  let fadeRaf = 0;
+  function fadeTo(to, ms, done) {
+    cancelAnimationFrame(fadeRaf);
+    const from = getV(), t0 = performance.now();
+    const step = now =&gt; {
+      const k = Math.min(1, (now - t0) / ms);
+      setV(from + (to - from) * k);
+      if (k &lt; 1) fadeRaf = requestAnimationFrame(step); else if (done) done();
+    };
+    fadeRaf = requestAnimationFrame(step);
+  }
+  const playing = () =&gt; !au.paused &amp;&amp; (!ctx || ctx.state === &#x27;running&#x27;);
+  function ui(wait) {
+    box.classList.toggle(&#x27;on&#x27;, st.on &amp;&amp; playing());
+    box.classList.toggle(&#x27;wait&#x27;, !!wait);
+    txt.textContent = wait ? (TOUCH ? &#x27;TAP TO PLAY&#x27; : &#x27;CLICK TO PLAY&#x27;) : st.on &amp;&amp; playing() ? &#x27;BGM ON&#x27; : &#x27;BGM OFF&#x27;;
+    vol.value = st.vol; val.textContent = st.vol;
+  }
+
+  // first-gesture unlock
+  const EVT = [&#x27;pointerdown&#x27;, &#x27;touchend&#x27;, &#x27;click&#x27;, &#x27;keydown&#x27;];
+  let armed = false;
+  const kick = e =&gt; {
+    if (box.contains(e.target) || e.key === &#x27;m&#x27; || e.key === &#x27;M&#x27;) return;
+    if (st.on &amp;&amp; !playing()) play();
+  };
+  function arm(on) {
+    if (on === armed) return; armed = on;
+    EVT.forEach(n =&gt; (on ? window.addEventListener : window.removeEventListener).call(window, n, kick, true));
+  }
+  let pending = false;
+  function play() {
+    if (pending) return;
+    graph();
+    // both calls must start synchronously inside the user gesture (iOS)
+    const r = ctx &amp;&amp; ctx.state !== &#x27;running&#x27; ? Promise.race([ctx.resume(), new Promise(res =&gt; setTimeout(res, 800))]) : null;
+    setV(0);
+    let p; try { p = au.play(); } catch (e) { p = Promise.reject(e); }
+    pending = true;
+    Promise.all([p &amp;&amp; p.then ? p : Promise.resolve(), r || Promise.resolve()]).then(() =&gt; {
+      pending = false;
+      if (ctx &amp;&amp; ctx.state !== &#x27;running&#x27;) { ui(true); arm(true); return; }
+      arm(false); fadeTo(target(), 900); ui();
+    }).catch(() =&gt; { pending = false; ui(true); arm(true); });
+  }
+  function stop() { arm(false); fadeTo(0, 400, () =&gt; { au.pause(); ui(); }); }
+  function toggle() {
+    if (st.on &amp;&amp; !playing()) { play(); return; }
+    st.on = !st.on; save(); st.on ? play() : stop(); ui();
+  }
+
+  au.addEventListener(&#x27;error&#x27;, () =&gt; { console.warn(&#x27;BGM 文件未找到&#x27;); });
+  // pause in background tabs / when the phone locks, resume on return
+  document.addEventListener(&#x27;visibilitychange&#x27;, () =&gt; {
+    if (document.hidden) { if (!au.paused) { cancelAnimationFrame(fadeRaf); au.pause(); } }
+    else if (st.on) play();
+    ui();
+  });
+
+  ui();
+  if (st.on) play();
+
+  // ---- wallpaper bridge ----
+  window.__bgm = {
+    set(on) { st.on = !!on; if (st.on) play(); else stop(); ui(); },
+    setVol(v) { st.vol = Math.max(0, Math.min(100, Math.round(v))); if (playing()) { setV(target()); } ui(); },
+    kick() { if (st.on &amp;&amp; !playing()) play(); },
+    isOn: () =&gt; st.on
+  };
+})();
+&lt;/script&gt;
+&lt;!-- wp.js bridge removed for background-only embed --&gt;
+&lt;/body&gt;
+&lt;/html&gt;"></iframe>
+<div class="halo-veil"></div>
+<div class="vignette"></div>
+
+<div class="wrap">
+  <div class="head">
+    <div>
+      <h1 class="title">元素周期表</h1>
+      <div class="sub">PERIODIC TABLE OF ELEMENTS · 高中化学 · 118 种元素（含 2016 最新命名 113–118 号）</div>
+    </div>
+    <div class="legend" id="legend"></div>
   </div>
+  <div class="pt" id="pt"></div>
+  <div class="hint">点击任意元素查看高中化学详解 · Click an element</div>
+  <div class="count">共 <span id="cnt">118</span> 种元素 · 数据截至 IUPAC 2016 命名</div>
 </div>
+
+<div class="credit">背景 <a href="https://github.com/Ryder191/haloflux" target="_blank" rel="noopener">HALOFLUX</a> by Ryder191 · 非商业使用</div>
+<div class="scrim" id="scrim"></div>
+<aside class="detail" id="detail" aria-hidden="true">
+  <div class="d-accent" id="dAccent"></div>
+  <button class="d-close" id="dClose" aria-label="关闭">×</button>
+  <div class="d-body" id="dBody"></div>
+</aside>
+
+<script>
+const ELEMENTS = [{"z":1,"sym":"H","cn":"氢","en":"Hydrogen","mass":"1.008","cat":"nonmetal","period":1,"group":1,"glabel":"ⅠA","row":1,"col":1,"block":"s","ox":"+1, -1","state":"气态","mp":"-259.1 ℃","bp":"-252.9 ℃","density":"0.0899 g/L","eneg":2.2,"config":"1s¹","shells":[1],"notes":["最轻的元素，宇宙中最丰富的元素。","H₂ 具有还原性，可还原金属氧化物（如 H₂ + CuO → Cu + H₂O）。","与非金属化合：H₂ + Cl₂ 点燃生成 HCl；N₂ + 3H₂ ⇌ 2NH₃（工业合成氨）。","同位素氕(¹H)、氘(²H)、氚(³H)，是相对原子质量基准。"],"uses":"工业制盐酸、合成氨、金属冶炼还原剂、氢能源。","new":false},{"z":2,"sym":"He","cn":"氦","en":"Helium","mass":"4.0026","cat":"noble","period":1,"group":18,"glabel":"0","row":1,"col":18,"block":"s","ox":"0","state":"气态","mp":"-272.2 ℃","bp":"-268.9 ℃","density":"0.1785 g/L","eneg":"—","config":"1s²","shells":[2],"notes":["稀有气体，最外层 2 个电子，结构稳定，化学性质极不活泼。","密度仅次于氢，用于飞艇、气球。","沸点最低，用于低温超导冷却、深海呼吸气混合。"],"uses":"低温制冷、飞艇气球、焊接保护气、核磁共振冷却。","new":false},{"z":3,"sym":"Li","cn":"锂","en":"Lithium","mass":"6.94","cat":"alkali","period":2,"group":1,"glabel":"ⅠA","row":2,"col":1,"block":"s","ox":"+1","state":"固态","mp":"180.5 ℃","bp":"1342 ℃","density":"0.534 g/cm³","eneg":0.98,"config":"[He] 2s¹","shells":[2,1],"notes":["碱金属，活泼，需隔绝空气保存。","与 O₂ 反应只生成 Li₂O（对比 Na 生成 Na₂O₂，是常考差异）。","焰色反应呈洋红色。","锂电池的关键材料。"],"uses":"锂离子电池、轻质合金、玻璃陶瓷。","new":false},{"z":4,"sym":"Be","cn":"铍","en":"Beryllium","mass":"9.0122","cat":"alkaline","period":2,"group":2,"glabel":"ⅡA","row":2,"col":2,"block":"s","ox":"+2","state":"固态","mp":"1287 ℃","bp":"2469 ℃","density":"1.85 g/cm³","eneg":1.57,"config":"[He] 2s²","shells":[2,2],"notes":["碱土金属，氧化物和氢氧化物具有两性。","铍及化合物有毒，需防护。","密度小、刚度高，用于航空航天合金。"],"uses":"航空合金、X 射线窗口、核反应堆慢化剂。","new":false},{"z":5,"sym":"B","cn":"硼","en":"Boron","mass":"10.81","cat":"metalloid","period":2,"group":13,"glabel":"ⅢA","row":2,"col":13,"block":"p","ox":"+3","state":"固态","mp":"2076 ℃","bp":"3927 ℃","density":"2.34 g/cm³","eneg":2.04,"config":"[He] 2s² 2p¹","shells":[2,3],"notes":["准金属，硬度高。","硼酸 H₃BO₃ 为弱酸，可用于中和碱性；硼砂是重要硼化合物。","硼是植物必需微量元素。"],"uses":"硼硅玻璃、陶瓷、半导体掺杂、核控制材料。","new":false},{"z":6,"sym":"C","cn":"碳","en":"Carbon","mass":"12.011","cat":"nonmetal","period":2,"group":14,"glabel":"ⅣA","row":2,"col":14,"block":"p","ox":"+4, +2, -4","state":"固态","mp":"3550 ℃","bp":"4027 ℃","density":"2.27 g/cm³(石墨)","eneg":2.55,"config":"[He] 2s² 2p²","shells":[2,4],"notes":["同素异形体：金刚石、石墨、C₆₀（富勒烯）、石墨烯。","CO₂ 与 CO：CO 有毒，具还原性；CO₂ 是酸性氧化物。","C 具还原性：C + CuO 高温 → Cu + CO₂↑；C + O₂ 充分燃烧生成 CO₂。","是有机化学的骨架元素，形成种类最多的化合物。"],"uses":"燃料、钢铁冶炼、电极、金刚石刀具、碳材料。","new":false},{"z":7,"sym":"N","cn":"氮","en":"Nitrogen","mass":"14.007","cat":"nonmetal","period":2,"group":15,"glabel":"ⅤA","row":2,"col":15,"block":"p","ox":"-3, +2, +3, +4, +5","state":"气态","mp":"-210.0 ℃","bp":"-195.8 ℃","density":"1.251 g/L","eneg":3.04,"config":"[He] 2s² 2p³","shells":[2,5],"notes":["N₂ 中 N≡N 键能大，化学性质稳定，可作保护气。","氮的固定：N₂ → NH₃（合成氨）、→ NO（放电/高温）。","重要化合物：NH₃、NO、NO₂、HNO₃（强氧化性酸）、氮肥。","空气中体积分数约 78%。"],"uses":"合成氨、化肥、惰性保护气、硝酸生产。","new":false},{"z":8,"sym":"O","cn":"氧","en":"Oxygen","mass":"15.999","cat":"nonmetal","period":2,"group":16,"glabel":"ⅥA","row":2,"col":16,"block":"p","ox":"-2","state":"气态","mp":"-218.3 ℃","bp":"-183.0 ℃","density":"1.429 g/L","eneg":3.44,"config":"[He] 2s² 2p⁴","shells":[2,6],"notes":["O₂ 与 O₃ 互为同素异形体。","具氧化性，支持燃烧和呼吸。","实验室制 O₂：2KClO₃ →(MnO₂,Δ) 2KCl + 3O₂↑；2H₂O₂ →(MnO₂) 2H₂O + O₂↑。","地壳中含量最多的元素。"],"uses":"呼吸、医疗供氧、炼钢、火箭氧化剂。","new":false},{"z":9,"sym":"F","cn":"氟","en":"Fluorine","mass":"18.998","cat":"halogen","period":2,"group":17,"glabel":"ⅦA","row":2,"col":17,"block":"p","ox":"-1","state":"气态","mp":"-219.7 ℃","bp":"-188.1 ℃","density":"1.696 g/L","eneg":3.98,"config":"[He] 2s² 2p⁵","shells":[2,7],"notes":["非金属性最强的元素，氧化性极强。","HF 是弱酸，但能腐蚀玻璃（SiO₂ + 4HF → SiF₄↑ + 2H₂O）。","F₂ 与水剧烈反应生成 HF 和 O₂。","氟化物用于牙膏防龋。"],"uses":"氟化物、制冷剂、含氟高分子（PTFE）、制药。","new":false},{"z":10,"sym":"Ne","cn":"氖","en":"Neon","mass":"20.180","cat":"noble","period":2,"group":18,"glabel":"0","row":2,"col":18,"block":"p","ox":"0","state":"气态","mp":"-248.6 ℃","bp":"-246.1 ℃","density":"0.9002 g/L","eneg":"—","config":"[He] 2s² 2p⁶","shells":[2,8],"notes":["稀有气体，化学性质极不活泼。","通电发出橙红色光，用于霓虹灯。"],"uses":"霓虹灯、指示灯、激光。","new":false},{"z":11,"sym":"Na","cn":"钠","en":"Sodium","mass":"22.990","cat":"alkali","period":3,"group":1,"glabel":"ⅠA","row":3,"col":1,"block":"s","ox":"+1","state":"固态","mp":"97.8 ℃","bp":"883 ℃","density":"0.971 g/cm³","eneg":0.93,"config":"[Ne] 3s¹","shells":[2,8,1],"notes":["活泼碱金属，通常保存在煤油中。","与水剧烈反应：2Na + 2H₂O → 2NaOH + H₂↑。","在空气中燃烧生成 Na₂O₂（过氧化钠，淡黄色），可作供氧剂。","焰色反应呈黄色。"],"uses":"制 NaOH、NaCl、金属钠、钠灯、核冷却剂。","new":false},{"z":12,"sym":"Mg","cn":"镁","en":"Magnesium","mass":"24.305","cat":"alkaline","period":3,"group":2,"glabel":"ⅡA","row":3,"col":2,"block":"s","ox":"+2","state":"固态","mp":"650 ℃","bp":"1090 ℃","density":"1.74 g/cm³","eneg":1.31,"config":"[Ne] 3s²","shells":[2,8,2],"notes":["燃烧发出耀眼白光：2Mg + O₂ →(点燃) 2MgO。","可与 CO₂ 反应：2Mg + CO₂ →(点燃) 2MgO + C。","镁铝合金密度小、强度高，用于航空。"],"uses":"轻合金、烟火、还原剂、镁光灯。","new":false},{"z":13,"sym":"Al","cn":"铝","en":"Aluminium","mass":"26.982","cat":"posttrans","period":3,"group":13,"glabel":"ⅢA","row":3,"col":13,"block":"p","ox":"+3","state":"固态","mp":"660.4 ℃","bp":"2467 ℃","density":"2.70 g/cm³","eneg":1.61,"config":"[Ne] 3s² 3p¹","shells":[2,8,3],"notes":["两性元素：Al、Al₂O₃、Al(OH)₃ 均既能与酸又能与强碱反应。","表面易形成致密氧化膜而钝化，耐腐蚀。","铝热反应：2Al + Fe₂O₃ →(高温) Al₂O₃ + 2Fe，用于焊接钢轨。","地壳中含量最多的金属元素。"],"uses":"铝合金、导线、包装、建筑、铝热焊接。","new":false},{"z":14,"sym":"Si","cn":"硅","en":"Silicon","mass":"28.085","cat":"metalloid","period":3,"group":14,"glabel":"ⅣA","row":3,"col":14,"block":"p","ox":"+4","state":"固态","mp":"1414 ℃","bp":"3265 ℃","density":"2.33 g/cm³","eneg":1.9,"config":"[Ne] 3s² 3p²","shells":[2,8,4],"notes":["良好的半导体材料，用于芯片、太阳能电池。","SiO₂（石英、水晶）是酸性氧化物，与 HF 反应。","硅酸盐是陶瓷、玻璃、水泥的基础。"],"uses":"半导体、光伏、玻璃、陶瓷、光纤。","new":false},{"z":15,"sym":"P","cn":"磷","en":"Phosphorus","mass":"30.974","cat":"nonmetal","period":3,"group":15,"glabel":"ⅤA","row":3,"col":15,"block":"p","ox":"-3, +3, +5","state":"固态","mp":"44.1 ℃(白磷)","bp":"280 ℃(白磷)","density":"1.82 g/cm³(白磷)","eneg":2.19,"config":"[Ne] 3s² 3p³","shells":[2,8,5],"notes":["同素异形体：白磷（剧毒、易自燃）与红磷（稳定）。","P₂O₅ 是酸性氧化物，与水生成 H₃PO₄。","磷肥（过磷酸钙）、农药、火柴。"],"uses":"磷肥、农药、火柴、阻燃剂。","new":false},{"z":16,"sym":"S","cn":"硫","en":"Sulfur","mass":"32.06","cat":"nonmetal","period":3,"group":16,"glabel":"ⅥA","row":3,"col":16,"block":"p","ox":"-2, +4, +6","state":"固态","mp":"115.2 ℃","bp":"444.6 ℃","density":"2.07 g/cm³","eneg":2.58,"config":"[Ne] 3s² 3p⁴","shells":[2,8,6],"notes":["淡黄色固体，俗称硫黄。","S + O₂ →(点燃) SO₂；SO₂ 具漂白性和还原性。","浓 H₂SO₄ 具强氧化性、吸水性、脱水性；接触法制硫酸。","SO₄²⁻ 检验：加 BaCl₂ 生成不溶于酸的 BaSO₄ 白色沉淀。"],"uses":"硫酸生产、橡胶硫化、农药、火药。","new":false},{"z":17,"sym":"Cl","cn":"氯","en":"Chlorine","mass":"35.45","cat":"halogen","period":3,"group":17,"glabel":"ⅦA","row":3,"col":17,"block":"p","ox":"-1, +1, +3, +5, +7","state":"气态","mp":"-101.0 ℃","bp":"-34.0 ℃","density":"3.214 g/L","eneg":3.16,"config":"[Ne] 3s² 3p⁵","shells":[2,8,7],"notes":["黄绿色刺激性气体，有毒。","强氧化性：Cl₂ + 2NaBr → 2NaCl + Br₂。","与 NaOH 反应制漂白液（NaClO）；与石灰乳制漂白粉。","Cl⁻ 检验：AgNO₃ + 稀 HNO₃ 生成白色 AgCl 沉淀。"],"uses":"消毒、漂白、制盐酸、有机合成。","new":false},{"z":18,"sym":"Ar","cn":"氩","en":"Argon","mass":"39.948","cat":"noble","period":3,"group":18,"glabel":"0","row":3,"col":18,"block":"p","ox":"0","state":"气态","mp":"-189.3 ℃","bp":"-185.9 ℃","density":"1.784 g/L","eneg":"—","config":"[Ne] 3s² 3p⁶","shells":[2,8,8],"notes":["稀有气体，化学性质极不活泼。","空气中含量最高的稀有气体（约 0.93%）。","常用作焊接保护气。"],"uses":"焊接保护气、白炽灯填充、冶金保护。","new":false},{"z":19,"sym":"K","cn":"钾","en":"Potassium","mass":"39.098","cat":"alkali","period":4,"group":1,"glabel":"ⅠA","row":4,"col":1,"block":"s","ox":"+1","state":"固态","mp":"63.4 ℃","bp":"759 ℃","density":"0.862 g/cm³","eneg":0.82,"config":"[Ar] 4s¹","shells":[2,8,8,1],"notes":["活泼碱金属，与水反应比钠更剧烈。","焰色反应呈紫色（需透过蓝色钴玻璃观察）。","KOH 是强碱；钾肥是三大化肥之一。"],"uses":"钾肥、KOH、玻璃、肥皂。","new":false},{"z":20,"sym":"Ca","cn":"钙","en":"Calcium","mass":"40.078","cat":"alkaline","period":4,"group":2,"glabel":"ⅡA","row":4,"col":2,"block":"s","ox":"+2","state":"固态","mp":"842 ℃","bp":"1484 ℃","density":"1.55 g/cm³","eneg":1.0,"config":"[Ar] 4s²","shells":[2,8,8,2],"notes":["活泼碱土金属。","CaO（生石灰）+ H₂O → Ca(OH)₂（熟石灰），放热。","CaCO₃（石灰石）高温分解生成 CaO。","焰色反应呈砖红色。"],"uses":"建筑材料、炼钢脱氧、补钙、水泥。","new":false},{"z":21,"sym":"Sc","cn":"钪","en":"Scandium","mass":"44.956","cat":"transition","period":4,"group":3,"glabel":"ⅢB","row":4,"col":3,"block":"d","ox":"+3","state":"固态","mp":"1541 ℃","bp":"2836 ℃","density":"2.99 g/cm³","eneg":1.36,"config":"[Ar] 3d¹ 4s²","shells":[2,8,9,2],"notes":["稀土元素，质轻、强度高。","用于高性能铝合金。"],"uses":"航空合金、高强度灯。","new":false},{"z":22,"sym":"Ti","cn":"钛","en":"Titanium","mass":"47.867","cat":"transition","period":4,"group":4,"glabel":"ⅣB","row":4,"col":4,"block":"d","ox":"+4, +3","state":"固态","mp":"1668 ℃","bp":"3287 ℃","density":"4.54 g/cm³","eneg":1.54,"config":"[Ar] 3d² 4s²","shells":[2,8,10,2],"notes":["密度小、强度高、耐腐蚀，被誉为“太空金属”。","TiO₂ 是白色颜料（钛白粉）。","钛合金用于航空、医疗植入物。"],"uses":"航空合金、医疗植入、钛白粉、化工设备。","new":false},{"z":23,"sym":"V","cn":"钒","en":"Vanadium","mass":"50.942","cat":"transition","period":4,"group":5,"glabel":"ⅤB","row":4,"col":5,"block":"d","ox":"+5, +4, +3, +2","state":"固态","mp":"1910 ℃","bp":"3407 ℃","density":"6.11 g/cm³","eneg":1.63,"config":"[Ar] 3d³ 4s²","shells":[2,8,11,2],"notes":["V₂O₅ 是接触法制硫酸的催化剂。","钒钢强度高。"],"uses":"合金钢、催化剂、电池。","new":false},{"z":24,"sym":"Cr","cn":"铬","en":"Chromium","mass":"51.996","cat":"transition","period":4,"group":6,"glabel":"ⅥB","row":4,"col":6,"block":"d","ox":"+6, +3, +2","state":"固态","mp":"1857 ℃","bp":"2671 ℃","density":"7.19 g/cm³","eneg":1.66,"config":"[Ar] 3d⁵ 4s¹","shells":[2,8,13,1],"notes":["K₂Cr₂O₇（橙色）具强氧化性，酸性条件下可氧化 Fe²⁺、乙醇等。","Cr³⁺ 呈绿色；Cr(OH)₃ 具两性。","铬镀层光亮耐磨，用于电镀。"],"uses":"不锈钢、电镀、颜料、鞣革。","new":false},{"z":25,"sym":"Mn","cn":"锰","en":"Manganese","mass":"54.938","cat":"transition","period":4,"group":7,"glabel":"ⅦB","row":4,"col":7,"block":"d","ox":"+7, +6, +4, +2","state":"固态","mp":"1246 ℃","bp":"2061 ℃","density":"7.30 g/cm³","eneg":1.55,"config":"[Ar] 3d⁵ 4s²","shells":[2,8,13,2],"notes":["KMnO₄（高锰酸钾，紫红色）是强氧化剂，酸性条件下氧化性更强。","MnO₂ 可作 H₂O₂ 分解、KClO₃ 分解的催化剂。","Mn²⁺ 近无色。"],"uses":"炼钢、电池、高锰酸钾、催化剂。","new":false},{"z":26,"sym":"Fe","cn":"铁","en":"Iron","mass":"55.845","cat":"transition","period":4,"group":8,"glabel":"Ⅷ","row":4,"col":8,"block":"d","ox":"+2, +3","state":"固态","mp":"1538 ℃","bp":"2861 ℃","density":"7.87 g/cm³","eneg":1.83,"config":"[Ar] 3d⁶ 4s²","shells":[2,8,14,2],"notes":["变价金属，常见 Fe²⁺（浅绿色）与 Fe³⁺（棕黄色）。","Fe(OH)₂ 白色→迅速变灰绿→最终红褐色 Fe(OH)₃。","Fe³⁺ 检验：加 KSCN 溶液变血红色。","铁在潮湿空气中生锈（主要成分 Fe₂O₃·xH₂O）。","高炉炼铁：Fe₂O₃ + 3CO →(高温) 2Fe + 3CO₂。"],"uses":"钢铁、建筑、机械、磁性材料。","new":false},{"z":27,"sym":"Co","cn":"钴","en":"Cobalt","mass":"58.933","cat":"transition","period":4,"group":9,"glabel":"Ⅷ","row":4,"col":9,"block":"d","ox":"+2, +3","state":"固态","mp":"1495 ℃","bp":"2927 ℃","density":"8.89 g/cm³","eneg":1.88,"config":"[Ar] 3d⁷ 4s²","shells":[2,8,15,2],"notes":["钴蓝颜料；CoCl₂ 随含水不同变色，可作湿度指示。","钴是维生素 B₁₂ 的核心元素。"],"uses":"硬质合金、电池、颜料、磁性材料。","new":false},{"z":28,"sym":"Ni","cn":"镍","en":"Nickel","mass":"58.693","cat":"transition","period":4,"group":10,"glabel":"Ⅷ","row":4,"col":10,"block":"d","ox":"+2, +3","state":"固态","mp":"1455 ℃","bp":"2913 ℃","density":"8.91 g/cm³","eneg":1.91,"config":"[Ar] 3d⁸ 4s²","shells":[2,8,16,2],"notes":["耐腐蚀，常用于不锈钢和电镀。","镍是氢化反应的催化剂。"],"uses":"不锈钢、电镀、电池、催化剂。","new":false},{"z":29,"sym":"Cu","cn":"铜","en":"Copper","mass":"63.546","cat":"transition","period":4,"group":11,"glabel":"ⅠB","row":4,"col":11,"block":"d","ox":"+2, +1","state":"固态","mp":"1085 ℃","bp":"2562 ℃","density":"8.96 g/cm³","eneg":1.9,"config":"[Ar] 3d¹⁰ 4s¹","shells":[2,8,18,1],"notes":["紫红色金属，导电导热性优良（仅次于银）。","Cu²⁺ 溶液呈蓝色；CuSO₄·5H₂O 是蓝色晶体。","Cu 与浓 HNO₃ 生成 NO₂（红棕色），与稀 HNO₃ 生成 NO（无色）。","铜绿主要成分 Cu₂(OH)₂CO₃。"],"uses":"电线电缆、电器、合金（黄铜/青铜）、货币。","new":false},{"z":30,"sym":"Zn","cn":"锌","en":"Zinc","mass":"65.38","cat":"transition","period":4,"group":12,"glabel":"ⅡB","row":4,"col":12,"block":"d","ox":"+2","state":"固态","mp":"419.5 ℃","bp":"907 ℃","density":"7.14 g/cm³","eneg":1.65,"config":"[Ar] 3d¹⁰ 4s²","shells":[2,8,18,2],"notes":["较活泼金属，与稀酸反应制 H₂：Zn + 2HCl → ZnCl₂ + H₂↑。","原电池中常作负极（如锌锰干电池）。","镀锌可防腐（白铁皮）。"],"uses":"镀锌、电池、合金、氧化锌。","new":false},{"z":31,"sym":"Ga","cn":"镓","en":"Gallium","mass":"69.723","cat":"posttrans","period":4,"group":13,"glabel":"ⅢA","row":4,"col":13,"block":"p","ox":"+3","state":"固态","mp":"29.8 ℃","bp":"2403 ℃","density":"5.91 g/cm³","eneg":1.81,"config":"[Ar] 3d¹⁰ 4s² 4p¹","shells":[2,8,18,3],"notes":["熔点低（约 30℃），可在手心熔化。","用于半导体（GaAs）、LED。"],"uses":"半导体、LED、低熔点合金。","new":false},{"z":32,"sym":"Ge","cn":"锗","en":"Germanium","mass":"72.630","cat":"metalloid","period":4,"group":14,"glabel":"ⅣA","row":4,"col":14,"block":"p","ox":"+4, +2","state":"固态","mp":"938 ℃","bp":"2833 ℃","density":"5.32 g/cm³","eneg":2.01,"config":"[Ar] 3d¹⁰ 4s² 4p²","shells":[2,8,18,4],"notes":["早期晶体管材料，现用于红外光学、光纤。","准金属。"],"uses":"半导体、红外光学、光纤。","new":false},{"z":33,"sym":"As","cn":"砷","en":"Arsenic","mass":"74.922","cat":"metalloid","period":4,"group":15,"glabel":"ⅤA","row":4,"col":15,"block":"p","ox":"+3, +5, -3","state":"固态","mp":"817 ℃(升华)","bp":"614 ℃(升华)","density":"5.73 g/cm³","eneg":2.18,"config":"[Ar] 3d¹⁰ 4s² 4p³","shells":[2,8,18,5],"notes":["砷及其化合物有毒（砒霜 As₂O₃）。","砷化镓是半导体材料。"],"uses":"半导体、合金、农药（受限）。","new":false},{"z":34,"sym":"Se","cn":"硒","en":"Selenium","mass":"78.971","cat":"nonmetal","period":4,"group":16,"glabel":"ⅥA","row":4,"col":16,"block":"p","ox":"-2, +4, +6","state":"固态","mp":"221 ℃","bp":"685 ℃","density":"4.81 g/cm³","eneg":2.55,"config":"[Ar] 3d¹⁰ 4s² 4p⁴","shells":[2,8,18,6],"notes":["人体必需微量元素，硒缺乏与克山病相关。","光电导性好，用于复印、光电池。"],"uses":"光电材料、玻璃着色、营养补充。","new":false},{"z":35,"sym":"Br","cn":"溴","en":"Bromine","mass":"79.904","cat":"halogen","period":4,"group":17,"glabel":"ⅦA","row":4,"col":17,"block":"p","ox":"-1, +1, +3, +5, +7","state":"液态","mp":"-7.2 ℃","bp":"58.8 ℃","density":"3.12 g/cm³","eneg":2.96,"config":"[Ar] 3d¹⁰ 4s² 4p⁵","shells":[2,8,18,7],"notes":["深红棕色液体，易挥发，有刺激性气味。","Br₂ 氧化性弱于 Cl₂、强于 I₂：Cl₂ + 2KBr → 2KCl + Br₂。","AgBr 见光分解，用于感光材料。"],"uses":"感光材料、阻燃剂、医药、海水提溴。","new":false},{"z":36,"sym":"Kr","cn":"氪","en":"Krypton","mass":"83.798","cat":"noble","period":4,"group":18,"glabel":"0","row":4,"col":18,"block":"p","ox":"0","state":"气态","mp":"-157.4 ℃","bp":"-153.2 ℃","density":"1.798 g/L","eneg":"—","config":"[Ar] 3d¹⁰ 4s² 4p⁶","shells":[2,8,18,8],"notes":["稀有气体，用于高性能灯、激光。"],"uses":"照明、激光、绝缘气体。","new":false},{"z":37,"sym":"Rb","cn":"铷","en":"Rubidium","mass":"85.468","cat":"alkali","period":5,"group":1,"glabel":"ⅠA","row":5,"col":1,"block":"s","ox":"+1","state":"固态","mp":"39.3 ℃","bp":"688 ℃","density":"1.532 g/cm³","eneg":0.82,"config":"[Kr] 5s¹","shells":[2,8,18,8,1],"notes":["极活泼碱金属，遇水剧烈反应。","用于原子钟。"],"uses":"原子钟、光电管、特种玻璃。","new":false},{"z":38,"sym":"Sr","cn":"锶","en":"Strontium","mass":"87.62","cat":"alkaline","period":5,"group":2,"glabel":"ⅡA","row":5,"col":2,"block":"s","ox":"+2","state":"固态","mp":"777 ℃","bp":"1382 ℃","density":"2.63 g/cm³","eneg":0.95,"config":"[Kr] 5s²","shells":[2,8,18,8,2],"notes":["焰色反应呈洋红色，用于焰火。","锶-90 是核裂变产物，具放射性。"],"uses":"焰火、颜料、特种玻璃。","new":false},{"z":39,"sym":"Y","cn":"钇","en":"Yttrium","mass":"88.906","cat":"transition","period":5,"group":3,"glabel":"ⅢB","row":5,"col":3,"block":"d","ox":"+3","state":"固态","mp":"1522 ℃","bp":"3345 ℃","density":"4.47 g/cm³","eneg":1.22,"config":"[Kr] 4d¹ 5s²","shells":[2,8,18,9,2],"notes":["稀土元素，用于荧光粉、激光、超导。"],"uses":"荧光粉、激光、超导、陶瓷。","new":false},{"z":40,"sym":"Zr","cn":"锆","en":"Zirconium","mass":"91.224","cat":"transition","period":5,"group":4,"glabel":"ⅣB","row":5,"col":4,"block":"d","ox":"+4","state":"固态","mp":"1855 ℃","bp":"4409 ℃","density":"6.51 g/cm³","eneg":1.33,"config":"[Kr] 4d² 5s²","shells":[2,8,18,10,2],"notes":["耐腐蚀、耐高温，用于核反应堆包壳。","锆石是宝石。"],"uses":"核工业、陶瓷、耐火材料。","new":false},{"z":41,"sym":"Nb","cn":"铌","en":"Niobium","mass":"92.906","cat":"transition","period":5,"group":5,"glabel":"ⅤB","row":5,"col":5,"block":"d","ox":"+5, +3","state":"固态","mp":"2469 ℃","bp":"4927 ℃","density":"8.57 g/cm³","eneg":1.6,"config":"[Kr] 4d⁴ 5s¹","shells":[2,8,18,12,1],"notes":["超导材料（如 Nb-Ti 合金）。"],"uses":"超导、合金钢、航天。","new":false},{"z":42,"sym":"Mo","cn":"钼","en":"Molybdenum","mass":"95.95","cat":"transition","period":5,"group":6,"glabel":"ⅥB","row":5,"col":6,"block":"d","ox":"+6, +4","state":"固态","mp":"2617 ℃","bp":"4614 ℃","density":"9.56 g/cm³","eneg":2.16,"config":"[Kr] 4d⁵ 5s¹","shells":[2,8,18,13,1],"notes":["钼钢强度高、耐高温。","钼是固氮酶的活性中心。"],"uses":"合金钢、催化剂、润滑剂。","new":false},{"z":43,"sym":"Tc","cn":"锝","en":"Technetium","mass":"[98]","cat":"transition","period":5,"group":7,"glabel":"ⅦB","row":5,"col":7,"block":"d","ox":"+7","state":"固态","mp":"2157 ℃","bp":"4265 ℃","density":"11.5 g/cm³","eneg":1.9,"config":"[Kr] 4d⁵ 5s²","shells":[2,8,18,13,2],"notes":["第一个人工合成元素，无稳定同位素。","锝-99m 用于医学显像。"],"uses":"医学显像、科研。","new":false},{"z":44,"sym":"Ru","cn":"钌","en":"Ruthenium","mass":"101.07","cat":"transition","period":5,"group":8,"glabel":"Ⅷ","row":5,"col":8,"block":"d","ox":"+3, +4, +8","state":"固态","mp":"2334 ℃","bp":"4150 ℃","density":"12.37 g/cm³","eneg":2.2,"config":"[Kr] 4d⁷ 5s¹","shells":[2,8,18,15,1],"notes":["铂族金属，耐腐蚀，用于催化剂、电子触点。"],"uses":"催化剂、电子、耐磨合金。","new":false},{"z":45,"sym":"Rh","cn":"铑","en":"Rhodium","mass":"102.906","cat":"transition","period":5,"group":9,"glabel":"Ⅷ","row":5,"col":9,"block":"d","ox":"+3","state":"固态","mp":"1964 ℃","bp":"3695 ℃","density":"12.41 g/cm³","eneg":2.28,"config":"[Kr] 4d⁸ 5s¹","shells":[2,8,18,16,1],"notes":["汽车尾气三元催化器的关键成分。"],"uses":"催化剂、首饰、反射镜。","new":false},{"z":46,"sym":"Pd","cn":"钯","en":"Palladium","mass":"106.42","cat":"transition","period":5,"group":10,"glabel":"Ⅷ","row":5,"col":10,"block":"d","ox":"+2, +4","state":"固态","mp":"1555 ℃","bp":"2963 ℃","density":"12.02 g/cm³","eneg":2.2,"config":"[Kr] 4d¹⁰","shells":[2,8,18,18],"notes":["能大量吸收氢气，用于储氢、加氢催化。"],"uses":"催化剂、储氢、电子。","new":false},{"z":47,"sym":"Ag","cn":"银","en":"Silver","mass":"107.868","cat":"transition","period":5,"group":11,"glabel":"ⅠB","row":5,"col":11,"block":"d","ox":"+1","state":"固态","mp":"961.8 ℃","bp":"2162 ℃","density":"10.49 g/cm³","eneg":1.93,"config":"[Kr] 4d¹⁰ 5s¹","shells":[2,8,18,18,1],"notes":["导电导热性最好的金属。","AgNO₃ 用于检验 Cl⁻、Br⁻、I⁻（生成 AgCl 白、AgBr 淡黄、AgI 黄沉淀）。","AgBr 感光分解，用于摄影。"],"uses":"电子、首饰、感光材料、抗菌。","new":false},{"z":48,"sym":"Cd","cn":"镉","en":"Cadmium","mass":"112.414","cat":"transition","period":5,"group":12,"glabel":"ⅡB","row":5,"col":12,"block":"d","ox":"+2","state":"固态","mp":"321 ℃","bp":"767 ℃","density":"8.65 g/cm³","eneg":1.69,"config":"[Kr] 4d¹⁰ 5s²","shells":[2,8,18,18,2],"notes":["重金属，有毒（痛痛病）。","用于镍镉电池、颜料。"],"uses":"电池、颜料、镀层。","new":false},{"z":49,"sym":"In","cn":"铟","en":"Indium","mass":"114.818","cat":"posttrans","period":5,"group":13,"glabel":"ⅢA","row":5,"col":13,"block":"p","ox":"+3","state":"固态","mp":"156.6 ℃","bp":"2072 ℃","density":"7.31 g/cm³","eneg":1.78,"config":"[Kr] 4d¹⁰ 5s² 5p¹","shells":[2,8,18,18,3],"notes":["用于 ITO 透明导电膜（触摸屏、液晶）。"],"uses":"透明电极、焊料、半导体。","new":false},{"z":50,"sym":"Sn","cn":"锡","en":"Tin","mass":"118.710","cat":"posttrans","period":5,"group":14,"glabel":"ⅣA","row":5,"col":14,"block":"p","ox":"+2, +4","state":"固态","mp":"231.9 ℃","bp":"2602 ℃","density":"7.31 g/cm³","eneg":1.96,"config":"[Kr] 4d¹⁰ 5s² 5p²","shells":[2,8,18,18,4],"notes":["锡箔、马口铁（镀锡铁）用于罐头。","SnCl₂ 具还原性。"],"uses":"焊料、马口铁、合金（青铜）。","new":false},{"z":51,"sym":"Sb","cn":"锑","en":"Antimony","mass":"121.760","cat":"metalloid","period":5,"group":15,"glabel":"ⅤA","row":5,"col":15,"block":"p","ox":"+3, +5, -3","state":"固态","mp":"630.7 ℃","bp":"1587 ℃","density":"6.68 g/cm³","eneg":2.05,"config":"[Kr] 4d¹⁰ 5s² 5p³","shells":[2,8,18,18,5],"notes":["用于阻燃剂、合金（铅锑合金）。"],"uses":"阻燃剂、合金、电池。","new":false},{"z":52,"sym":"Te","cn":"碲","en":"Tellurium","mass":"127.60","cat":"metalloid","period":5,"group":16,"glabel":"ⅥA","row":5,"col":16,"block":"p","ox":"-2, +4, +6","state":"固态","mp":"449.5 ℃","bp":"988 ℃","density":"6.24 g/cm³","eneg":2.1,"config":"[Kr] 4d¹⁰ 5s² 5p⁴","shells":[2,8,18,18,6],"notes":["用于碲化镉薄膜太阳能电池。"],"uses":"光伏、热电、合金。","new":false},{"z":53,"sym":"I","cn":"碘","en":"Iodine","mass":"126.904","cat":"halogen","period":5,"group":17,"glabel":"ⅦA","row":5,"col":17,"block":"p","ox":"-1, +1, +5, +7","state":"固态","mp":"113.7 ℃","bp":"184.3 ℃","density":"4.93 g/cm³","eneg":2.66,"config":"[Kr] 4d¹⁰ 5s² 5p⁵","shells":[2,8,18,18,7],"notes":["紫黑色固体，易升华成紫色蒸气。","淀粉遇 I₂ 变蓝，是碘的检验方法。","碘酒是 I₂ 的酒精溶液；KI 用于补碘。"],"uses":"医药、消毒、摄影、营养补充。","new":false},{"z":54,"sym":"Xe","cn":"氙","en":"Xenon","mass":"131.293","cat":"noble","period":5,"group":18,"glabel":"0","row":5,"col":18,"block":"p","ox":"0","state":"气态","mp":"-111.8 ℃","bp":"-108.1 ℃","density":"5.894 g/L","eneg":"—","config":"[Kr] 4d¹⁰ 5s² 5p⁶","shells":[2,8,18,18,8],"notes":["用于氙灯、离子推进器。","可与氟形成 XeF₂ 等化合物（稀有气体反常）。"],"uses":"氙灯、麻醉、离子推进、激光。","new":false},{"z":55,"sym":"Cs","cn":"铯","en":"Caesium","mass":"132.905","cat":"alkali","period":6,"group":1,"glabel":"ⅠA","row":6,"col":1,"block":"s","ox":"+1","state":"固态","mp":"28.4 ℃","bp":"671 ℃","density":"1.873 g/cm³","eneg":0.79,"config":"[Xe] 6s¹","shells":[2,8,18,18,8,1],"notes":["最活泼的金属之一，遇水爆炸。","铯原子钟是时间基准。"],"uses":"原子钟、光电管、特种玻璃。","new":false},{"z":56,"sym":"Ba","cn":"钡","en":"Barium","mass":"137.327","cat":"alkaline","period":6,"group":2,"glabel":"ⅡA","row":6,"col":2,"block":"s","ox":"+2","state":"固态","mp":"727 ℃","bp":"1870 ℃","density":"3.51 g/cm³","eneg":0.89,"config":"[Xe] 6s²","shells":[2,8,18,18,8,2],"notes":["焰色反应呈黄绿色。","BaSO₄ 不溶于水和酸，可作“钡餐”造影剂。","BaCl₂ 用于检验 SO₄²⁻。"],"uses":"钡餐、颜料、玻璃、烟火。","new":false},{"z":57,"sym":"La","cn":"镧","en":"Lanthanum","mass":"138.905","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":3,"block":"f","ox":"+3","state":"固态","mp":"920 ℃","bp":"3464 ℃","density":"6.15 g/cm³","eneg":1.1,"config":"[Xe] 5d¹ 6s²","shells":[2,8,18,18,9,2],"notes":["镧系元素之首，性质与稀土相似。","用于镍氢电池、光学玻璃、催化剂。"],"uses":"镍氢电池、光学玻璃、催化剂。","new":false},{"z":58,"sym":"Ce","cn":"铈","en":"Cerium","mass":"140.116","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":4,"block":"f","ox":"+3, +4","state":"固态","mp":"798 ℃","bp":"3443 ℃","density":"6.77 g/cm³","eneg":1.12,"config":"[Xe] 4f¹ 5d¹ 6s²","shells":[2,8,18,19,9,2],"notes":["最丰富的稀土元素之一。","CeO₂ 用作汽车尾气催化剂、抛光粉。"],"uses":"催化剂、抛光粉、打火石。","new":false},{"z":59,"sym":"Pr","cn":"镨","en":"Praseodymium","mass":"140.908","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":5,"block":"f","ox":"+3","state":"固态","mp":"931 ℃","bp":"3520 ℃","density":"6.77 g/cm³","eneg":1.13,"config":"[Xe] 4f³ 6s²","shells":[2,8,18,21,8,2],"notes":["用于强磁材料、玻璃着色（绿色）。"],"uses":"永磁材料、玻璃着色。","new":false},{"z":60,"sym":"Nd","cn":"钕","en":"Neodymium","mass":"144.242","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":6,"block":"f","ox":"+3","state":"固态","mp":"1024 ℃","bp":"3074 ℃","density":"7.01 g/cm³","eneg":1.14,"config":"[Xe] 4f⁴ 6s²","shells":[2,8,18,22,8,2],"notes":["钕铁硼是最强的永磁材料，用于电机、耳机。"],"uses":"永磁材料、激光、电机。","new":false},{"z":61,"sym":"Pm","cn":"钷","en":"Promethium","mass":"[145]","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":7,"block":"f","ox":"+3","state":"固态","mp":"1042 ℃","bp":"3000 ℃","density":"7.26 g/cm³","eneg":1.13,"config":"[Xe] 4f⁵ 6s²","shells":[2,8,18,23,8,2],"notes":["具放射性的稀土元素，无稳定同位素。"],"uses":"核电池、荧光材料、科研。","new":false},{"z":62,"sym":"Sm","cn":"钐","en":"Samarium","mass":"150.36","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":8,"block":"f","ox":"+3, +2","state":"固态","mp":"1072 ℃","bp":"1794 ℃","density":"7.52 g/cm³","eneg":1.17,"config":"[Xe] 4f⁶ 6s²","shells":[2,8,18,24,8,2],"notes":["钐钴永磁材料耐高温。"],"uses":"永磁材料、核反应堆控制棒。","new":false},{"z":63,"sym":"Eu","cn":"铕","en":"Europium","mass":"151.964","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":9,"block":"f","ox":"+3, +2","state":"固态","mp":"822 ℃","bp":"1529 ℃","density":"5.24 g/cm³","eneg":1.2,"config":"[Xe] 4f⁷ 6s²","shells":[2,8,18,25,8,2],"notes":["铕的荧光化合物用于彩色电视、LED 红色荧光粉。"],"uses":"荧光粉、防伪、激光。","new":false},{"z":64,"sym":"Gd","cn":"钆","en":"Gadolinium","mass":"157.25","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":10,"block":"f","ox":"+3","state":"固态","mp":"1313 ℃","bp":"3273 ℃","density":"7.90 g/cm³","eneg":1.2,"config":"[Xe] 4f⁷ 5d¹ 6s²","shells":[2,8,18,25,9,2],"notes":["钆配合物用作磁共振（MRI）造影剂。","磁性强。"],"uses":"MRI 造影、磁制冷、核工业。","new":false},{"z":65,"sym":"Tb","cn":"铽","en":"Terbium","mass":"158.925","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":11,"block":"f","ox":"+3","state":"固态","mp":"1356 ℃","bp":"3230 ℃","density":"8.23 g/cm³","eneg":1.2,"config":"[Xe] 4f⁹ 6s²","shells":[2,8,18,27,8,2],"notes":["绿色荧光粉的关键成分。"],"uses":"荧光粉、磁光材料。","new":false},{"z":66,"sym":"Dy","cn":"镝","en":"Dysprosium","mass":"162.500","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":12,"block":"f","ox":"+3","state":"固态","mp":"1412 ℃","bp":"2567 ℃","density":"8.55 g/cm³","eneg":1.22,"config":"[Xe] 4f¹⁰ 6s²","shells":[2,8,18,28,8,2],"notes":["提高钕铁硼磁体耐高温性能。"],"uses":"永磁材料、核控制棒。","new":false},{"z":67,"sym":"Ho","cn":"钬","en":"Holmium","mass":"164.930","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":13,"block":"f","ox":"+3","state":"固态","mp":"1474 ℃","bp":"2700 ℃","density":"8.80 g/cm³","eneg":1.23,"config":"[Xe] 4f¹¹ 6s²","shells":[2,8,18,29,8,2],"notes":["钬激光用于医疗手术。"],"uses":"激光、磁材料。","new":false},{"z":68,"sym":"Er","cn":"铒","en":"Erbium","mass":"167.259","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":14,"block":"f","ox":"+3","state":"固态","mp":"1529 ℃","bp":"2868 ℃","density":"9.05 g/cm³","eneg":1.24,"config":"[Xe] 4f¹² 6s²","shells":[2,8,18,30,8,2],"notes":["掺铒光纤放大器是光通信关键。"],"uses":"光通信、激光、玻璃着色。","new":false},{"z":69,"sym":"Tm","cn":"铥","en":"Thulium","mass":"168.934","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":15,"block":"f","ox":"+3","state":"固态","mp":"1545 ℃","bp":"1950 ℃","density":"9.32 g/cm³","eneg":1.25,"config":"[Xe] 4f¹³ 6s²","shells":[2,8,18,31,8,2],"notes":["稀土中含量最少之一，用于激光、X 射线。"],"uses":"激光、医疗、科研。","new":false},{"z":70,"sym":"Yb","cn":"镱","en":"Ytterbium","mass":"173.045","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":16,"block":"f","ox":"+3, +2","state":"固态","mp":"824 ℃","bp":"1196 ℃","density":"6.90 g/cm³","eneg":1.1,"config":"[Xe] 4f¹⁴ 6s²","shells":[2,8,18,32,8,2],"notes":["镱原子钟精度极高。"],"uses":"原子钟、光纤激光、合金。","new":false},{"z":71,"sym":"Lu","cn":"镥","en":"Lutetium","mass":"174.967","cat":"lanthanide","period":6,"group":3,"glabel":"ⅢB","row":9,"col":17,"block":"f","ox":"+3","state":"固态","mp":"1663 ℃","bp":"3402 ℃","density":"9.84 g/cm³","eneg":1.27,"config":"[Xe] 4f¹⁴ 5d¹ 6s²","shells":[2,8,18,32,9,2],"notes":["镥-177 用于靶向核医学治疗。"],"uses":"核医学、催化剂、PET。","new":false},{"z":72,"sym":"Hf","cn":"铪","en":"Hafnium","mass":"178.49","cat":"transition","period":6,"group":4,"glabel":"ⅣB","row":6,"col":4,"block":"d","ox":"+4","state":"固态","mp":"2233 ℃","bp":"4603 ℃","density":"13.31 g/cm³","eneg":1.3,"config":"[Xe] 4f¹⁴ 5d² 6s²","shells":[2,8,18,32,10,2],"notes":["用于核反应堆控制棒、高温合金。"],"uses":"核工业、高温合金、等离子切割。","new":false},{"z":73,"sym":"Ta","cn":"钽","en":"Tantalum","mass":"180.948","cat":"transition","period":6,"group":5,"glabel":"ⅤB","row":6,"col":5,"block":"d","ox":"+5","state":"固态","mp":"3017 ℃","bp":"5458 ℃","density":"16.69 g/cm³","eneg":1.5,"config":"[Xe] 4f¹⁴ 5d³ 6s²","shells":[2,8,18,32,11,2],"notes":["钽电容体积小、容量大，用于电子设备。","耐腐蚀，用于化工设备、医疗植入。"],"uses":"钽电容、医疗植入、化工。","new":false},{"z":74,"sym":"W","cn":"钨","en":"Tungsten","mass":"183.84","cat":"transition","period":6,"group":6,"glabel":"ⅥB","row":6,"col":6,"block":"d","ox":"+6","state":"固态","mp":"3422 ℃","bp":"5555 ℃","density":"19.25 g/cm³","eneg":2.36,"config":"[Xe] 4f¹⁴ 5d⁴ 6s²","shells":[2,8,18,32,12,2],"notes":["熔点最高的金属（约 3422℃），用作白炽灯灯丝。","碳化钨硬度极高，用于刀具。"],"uses":"灯丝、硬质合金、军工、电极。","new":false},{"z":75,"sym":"Re","cn":"铼","en":"Rhenium","mass":"186.207","cat":"transition","period":6,"group":7,"glabel":"ⅦB","row":6,"col":7,"block":"d","ox":"+7","state":"固态","mp":"3186 ℃","bp":"5596 ℃","density":"19.02 g/cm³","eneg":1.9,"config":"[Xe] 4f¹⁴ 5d⁵ 6s²","shells":[2,8,18,32,13,2],"notes":["稀有难熔金属，用于航空发动机高温合金。"],"uses":"航空合金、催化剂。","new":false},{"z":76,"sym":"Os","cn":"锇","en":"Osmium","mass":"190.23","cat":"transition","period":6,"group":8,"glabel":"Ⅷ","row":6,"col":8,"block":"d","ox":"+4, +8","state":"固态","mp":"3033 ℃","bp":"5012 ℃","density":"22.59 g/cm³","eneg":2.2,"config":"[Xe] 4f¹⁴ 5d⁶ 6s²","shells":[2,8,18,32,14,2],"notes":["密度最大的元素（约 22.6 g/cm³）。","OsO₄ 有毒，用于有机合成氧化。"],"uses":"高密度合金、笔尖、催化剂。","new":false},{"z":77,"sym":"Ir","cn":"铱","en":"Iridium","mass":"192.217","cat":"transition","period":6,"group":9,"glabel":"Ⅷ","row":6,"col":9,"block":"d","ox":"+3, +4","state":"固态","mp":"2446 ℃","bp":"4428 ℃","density":"22.56 g/cm³","eneg":2.2,"config":"[Xe] 4f¹⁴ 5d⁷ 6s²","shells":[2,8,18,32,15,2],"notes":["极耐腐蚀，用于火花塞、坩埚。","铱异常层与恐龙灭绝的陨石撞击假说相关。"],"uses":"火花塞、坩埚、催化剂。","new":false},{"z":78,"sym":"Pt","cn":"铂","en":"Platinum","mass":"195.084","cat":"transition","period":6,"group":10,"glabel":"Ⅷ","row":6,"col":10,"block":"d","ox":"+2, +4","state":"固态","mp":"1768 ℃","bp":"3825 ℃","density":"21.45 g/cm³","eneg":2.28,"config":"[Xe] 4f¹⁴ 5d⁹ 6s¹","shells":[2,8,18,32,17,1],"notes":["化学性质稳定，俗称白金。","铂是重要的催化剂（如汽车尾气、接触氧化）。","耐腐蚀，用于首饰、实验器皿。"],"uses":"催化剂、首饰、实验器皿、电极。","new":false},{"z":79,"sym":"Au","cn":"金","en":"Gold","mass":"196.967","cat":"transition","period":6,"group":11,"glabel":"ⅠB","row":6,"col":11,"block":"d","ox":"+3, +1","state":"固态","mp":"1064 ℃","bp":"2856 ℃","density":"19.32 g/cm³","eneg":2.54,"config":"[Xe] 4f¹⁴ 5d¹⁰ 6s¹","shells":[2,8,18,32,18,1],"notes":["化学性质极不活泼，不与一般酸反应，但溶于王水。","延展性最好的金属，可拉成极细金丝、压成极薄金箔。"],"uses":"首饰、电子接点、货币、镀金。","new":false},{"z":80,"sym":"Hg","cn":"汞","en":"Mercury","mass":"200.59","cat":"transition","period":6,"group":12,"glabel":"ⅡB","row":6,"col":12,"block":"d","ox":"+1, +2","state":"液态","mp":"-38.8 ℃","bp":"356.7 ℃","density":"13.59 g/cm³","eneg":2.0,"config":"[Xe] 4f¹⁴ 5d¹⁰ 6s²","shells":[2,8,18,32,18,2],"notes":["常温下唯一液态金属，俗称水银。","汞蒸气剧毒，需密封保存。","与硫反应生成 HgS（朱砂）。"],"uses":"温度计、气压计、荧光灯、化工。","new":false},{"z":81,"sym":"Tl","cn":"铊","en":"Thallium","mass":"204.38","cat":"posttrans","period":6,"group":13,"glabel":"ⅢA","row":6,"col":13,"block":"p","ox":"+1, +3","state":"固态","mp":"304 ℃","bp":"1473 ℃","density":"11.85 g/cm³","eneg":1.62,"config":"[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p¹","shells":[2,8,18,32,18,3],"notes":["铊盐剧毒，曾用作灭鼠剂（已禁用）。"],"uses":"特种玻璃、电子、科研。","new":false},{"z":82,"sym":"Pb","cn":"铅","en":"Lead","mass":"207.2","cat":"posttrans","period":6,"group":14,"glabel":"ⅣA","row":6,"col":14,"block":"p","ox":"+2, +4","state":"固态","mp":"327.5 ℃","bp":"1749 ℃","density":"11.34 g/cm³","eneg":2.33,"config":"[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p²","shells":[2,8,18,32,18,4],"notes":["重金属，有毒，可损害神经系统。","铅蓄电池是重要的二次电池（Pb/PbO₂/H₂SO₄）。","可屏蔽 X 射线、γ 射线。"],"uses":"铅蓄电池、防辐射、合金、电缆护套。","new":false},{"z":83,"sym":"Bi","cn":"铋","en":"Bismuth","mass":"208.980","cat":"posttrans","period":6,"group":15,"glabel":"ⅤA","row":6,"col":15,"block":"p","ox":"+3, +5","state":"固态","mp":"271.4 ℃","bp":"1564 ℃","density":"9.78 g/cm³","eneg":2.02,"config":"[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p³","shells":[2,8,18,32,18,5],"notes":["低熔点合金（伍德合金）成分，用于保险丝。","铋晶体有彩虹色氧化膜。"],"uses":"低熔点合金、医药（铋剂）、颜料。","new":false},{"z":84,"sym":"Po","cn":"钋","en":"Polonium","mass":"[209]","cat":"metalloid","period":6,"group":16,"glabel":"ⅥA","row":6,"col":16,"block":"p","ox":"+2, +4","state":"固态","mp":"254 ℃","bp":"962 ℃","density":"9.32 g/cm³","eneg":2.0,"config":"[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁴","shells":[2,8,18,32,18,6],"notes":["强放射性，居里夫妇发现。","极毒。"],"uses":"科研、抗静电、热源。","new":false},{"z":85,"sym":"At","cn":"砹","en":"Astatine","mass":"[210]","cat":"halogen","period":6,"group":17,"glabel":"ⅦA","row":6,"col":17,"block":"p","ox":"-1, +1","state":"固态","mp":"302 ℃","bp":"337 ℃","density":"—","eneg":2.2,"config":"[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁵","shells":[2,8,18,32,18,7],"notes":["极稀有的放射性卤素，地壳中含量极低。"],"uses":"科研、核医学。","new":false},{"z":86,"sym":"Rn","cn":"氡","en":"Radon","mass":"[222]","cat":"noble","period":6,"group":18,"glabel":"0","row":6,"col":18,"block":"p","ox":"0","state":"气态","mp":"-71 ℃","bp":"-61.7 ℃","density":"—","eneg":"—","config":"[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁶","shells":[2,8,18,32,18,8],"notes":["放射性稀有气体，室内氡污染是肺癌诱因之一。","由镭衰变产生。"],"uses":"科研、放射性示踪、医疗。","new":false},{"z":87,"sym":"Fr","cn":"钫","en":"Francium","mass":"[223]","cat":"alkali","period":7,"group":1,"glabel":"ⅠA","row":7,"col":1,"block":"s","ox":"+1","state":"固态","mp":"27 ℃","bp":"677 ℃","density":"—","eneg":0.7,"config":"[Rn] 7s¹","shells":[2,8,18,32,18,8,1],"notes":["最不稳定的天然元素之一，半衰期约 22 分钟。","极活泼。"],"uses":"科研。","new":false},{"z":88,"sym":"Ra","cn":"镭","en":"Radium","mass":"[226]","cat":"alkaline","period":7,"group":2,"glabel":"ⅡA","row":7,"col":2,"block":"s","ox":"+2","state":"固态","mp":"700 ℃","bp":"1737 ℃","density":"—","eneg":0.9,"config":"[Rn] 7s²","shells":[2,8,18,32,18,8,2],"notes":["强放射性，居里夫人发现。","曾用于夜光涂料（已淘汰）。"],"uses":"科研、历史医学。","new":false},{"z":89,"sym":"Ac","cn":"锕","en":"Actinium","mass":"[227]","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":3,"block":"f","ox":"+3","state":"固态","mp":"1050 ℃","bp":"3200 ℃","density":"—","eneg":1.1,"config":"[Rn] 6d¹ 7s²","shells":[2,8,18,32,18,9,2],"notes":["锕系元素之首，强放射性。","用于靶向核医学（锕-225）。"],"uses":"核医学、科研。","new":false},{"z":90,"sym":"Th","cn":"钍","en":"Thorium","mass":"232.038","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":4,"block":"f","ox":"+4","state":"固态","mp":"1750 ℃","bp":"4788 ℃","density":"—","eneg":1.3,"config":"[Rn] 6d² 7s²","shells":[2,8,18,32,18,10,2],"notes":["放射性，潜在的核燃料（钍基熔盐堆）。"],"uses":"核燃料研究、合金、高温材料。","new":false},{"z":91,"sym":"Pa","cn":"镤","en":"Protactinium","mass":"231.036","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":5,"block":"f","ox":"+5, +4","state":"固态","mp":"1572 ℃","bp":"4000 ℃","density":"—","eneg":1.5,"config":"[Rn] 5f² 6d¹ 7s²","shells":[2,8,18,32,20,9,2],"notes":["强放射性，铀衰变中间产物。"],"uses":"科研。","new":false},{"z":92,"sym":"U","cn":"铀","en":"Uranium","mass":"238.029","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":6,"block":"f","ox":"+6, +5, +4, +3","state":"固态","mp":"1132 ℃","bp":"4131 ℃","density":"—","eneg":1.38,"config":"[Rn] 5f³ 6d¹ 7s²","shells":[2,8,18,32,21,9,2],"notes":["重要的核燃料，铀-235 可发生链式裂变。","天然铀主要成分是铀-238。","铀化合物有放射性毒性。"],"uses":"核燃料、核武器、科研。","new":false},{"z":93,"sym":"Np","cn":"镎","en":"Neptunium","mass":"[237]","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":7,"block":"f","ox":"+5, +4","state":"固态","mp":"644 ℃","bp":"3902 ℃","density":"—","eneg":1.36,"config":"[Rn] 5f⁴ 6d¹ 7s²","shells":[2,8,18,32,22,9,2],"notes":["第一个人工合成的超铀元素，放射性。"],"uses":"科研、核电池。","new":false},{"z":94,"sym":"Pu","cn":"钚","en":"Plutonium","mass":"[244]","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":8,"block":"f","ox":"+4, +6, +5, +3","state":"固态","mp":"640 ℃","bp":"3228 ℃","density":"—","eneg":1.28,"config":"[Rn] 5f⁶ 7s²","shells":[2,8,18,32,24,8,2],"notes":["重要的核燃料与核武器材料，强放射性与化学毒性。","钚-238 用于核电池。"],"uses":"核能、核电池、科研。","new":false},{"z":95,"sym":"Am","cn":"镅","en":"Americium","mass":"[243]","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":9,"block":"f","ox":"+3","state":"固态","mp":"1176 ℃","bp":"2607 ℃","density":"—","eneg":1.3,"config":"[Rn] 5f⁷ 7s²","shells":[2,8,18,32,25,8,2],"notes":["镅-241 用于离子式烟雾报警器。"],"uses":"烟雾报警器、科研。","new":false},{"z":96,"sym":"Cm","cn":"锔","en":"Curium","mass":"[247]","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":10,"block":"f","ox":"+3","state":"固态","mp":"1340 ℃","bp":"3110 ℃","density":"—","eneg":1.3,"config":"[Rn] 5f⁷ 6d¹ 7s²","shells":[2,8,18,32,25,9,2],"notes":["人工合成放射性元素，以居里夫妇命名。"],"uses":"科研、核电池。","new":false},{"z":97,"sym":"Bk","cn":"锫","en":"Berkelium","mass":"[247]","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":11,"block":"f","ox":"+3, +4","state":"固态","mp":"986 ℃","bp":"—","density":"—","eneg":1.3,"config":"[Rn] 5f⁹ 7s²","shells":[2,8,18,32,27,8,2],"notes":["人工合成放射性元素。"],"uses":"科研。","new":false},{"z":98,"sym":"Cf","cn":"锎","en":"Californium","mass":"[251]","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":12,"block":"f","ox":"+3","state":"固态","mp":"900 ℃","bp":"—","density":"—","eneg":1.3,"config":"[Rn] 5f¹⁰ 7s²","shells":[2,8,18,32,28,8,2],"notes":["锎-252 是强中子源，用于癌症治疗、探测。"],"uses":"中子源、核医学、科研。","new":false},{"z":99,"sym":"Es","cn":"锿","en":"Einsteinium","mass":"[252]","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":13,"block":"f","ox":"+3","state":"固态","mp":"860 ℃","bp":"—","density":"—","eneg":1.3,"config":"[Rn] 5f¹¹ 7s²","shells":[2,8,18,32,29,8,2],"notes":["人工合成放射性元素，以爱因斯坦命名。"],"uses":"科研。","new":false},{"z":100,"sym":"Fm","cn":"镄","en":"Fermium","mass":"[257]","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":14,"block":"f","ox":"+3","state":"固态","mp":"1527 ℃","bp":"—","density":"—","eneg":1.3,"config":"[Rn] 5f¹² 7s²","shells":[2,8,18,32,30,8,2],"notes":["人工合成放射性元素，以费米命名。"],"uses":"科研。","new":false},{"z":101,"sym":"Md","cn":"钔","en":"Mendelevium","mass":"[258]","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":15,"block":"f","ox":"+3, +2","state":"固态","mp":"827 ℃","bp":"—","density":"—","eneg":1.3,"config":"[Rn] 5f¹³ 7s²","shells":[2,8,18,32,31,8,2],"notes":["人工合成放射性元素，以门捷列夫命名。"],"uses":"科研。","new":false},{"z":102,"sym":"No","cn":"锘","en":"Nobelium","mass":"[259]","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":16,"block":"f","ox":"+3, +2","state":"固态","mp":"827 ℃","bp":"—","density":"—","eneg":1.3,"config":"[Rn] 5f¹⁴ 7s²","shells":[2,8,18,32,32,8,2],"notes":["人工合成放射性元素，以诺贝尔命名。"],"uses":"科研。","new":false},{"z":103,"sym":"Lr","cn":"铹","en":"Lawrencium","mass":"[266]","cat":"actinide","period":7,"group":3,"glabel":"ⅢB","row":10,"col":17,"block":"f","ox":"+3","state":"固态","mp":"1627 ℃","bp":"—","density":"—","eneg":1.3,"config":"[Rn] 5f¹⁴ 6d¹ 7s²","shells":[2,8,18,32,32,9,2],"notes":["人工合成放射性元素，以劳伦斯命名。"],"uses":"科研。","new":false},{"z":104,"sym":"Rf","cn":"鑪","en":"Rutherfordium","mass":"[267]","cat":"transition","period":7,"group":4,"glabel":"ⅣB","row":7,"col":4,"block":"d","ox":"+4","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d² 7s²（预测）","shells":[2,8,18,32,32,10,2],"notes":["人工合成的超重元素，以卢瑟福命名。","半衰期极短，仅用于基础研究。"],"uses":"基础科研。","new":false},{"z":105,"sym":"Db","cn":"𬭊","en":"Dubnium","mass":"[268]","cat":"transition","period":7,"group":5,"glabel":"ⅤB","row":7,"col":5,"block":"d","ox":"+5","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d³ 7s²（预测）","shells":[2,8,18,32,32,11,2],"notes":["人工合成超重元素，以杜布纳研究所命名。"],"uses":"基础科研。","new":false},{"z":106,"sym":"Sg","cn":"𬭳","en":"Seaborgium","mass":"[269]","cat":"transition","period":7,"group":6,"glabel":"ⅥB","row":7,"col":6,"block":"d","ox":"+6","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d⁴ 7s²（预测）","shells":[2,8,18,32,32,12,2],"notes":["人工合成超重元素，以西博格命名。"],"uses":"基础科研。","new":false},{"z":107,"sym":"Bh","cn":"𬭛","en":"Bohrium","mass":"[270]","cat":"transition","period":7,"group":7,"glabel":"ⅦB","row":7,"col":7,"block":"d","ox":"+7","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d⁵ 7s²（预测）","shells":[2,8,18,32,32,13,2],"notes":["人工合成超重元素，以玻尔命名。"],"uses":"基础科研。","new":false},{"z":108,"sym":"Hs","cn":"𬭶","en":"Hassium","mass":"[269]","cat":"transition","period":7,"group":8,"glabel":"Ⅷ","row":7,"col":8,"block":"d","ox":"+8","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d⁶ 7s²（预测）","shells":[2,8,18,32,32,14,2],"notes":["人工合成超重元素，以德国黑森州命名。"],"uses":"基础科研。","new":false},{"z":109,"sym":"Mt","cn":"鿏","en":"Meitnerium","mass":"[278]","cat":"transition","period":7,"group":9,"glabel":"Ⅷ","row":7,"col":9,"block":"d","ox":"+3","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d⁷ 7s²（预测）","shells":[2,8,18,32,32,15,2],"notes":["人工合成超重元素，以迈特纳命名。"],"uses":"基础科研。","new":false},{"z":110,"sym":"Ds","cn":"𬭸","en":"Darmstadtium","mass":"[281]","cat":"transition","period":7,"group":10,"glabel":"Ⅷ","row":7,"col":10,"block":"d","ox":"+2","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d⁸ 7s²（预测）","shells":[2,8,18,32,32,16,2],"notes":["人工合成超重元素，以达姆施塔特命名。"],"uses":"基础科研。","new":false},{"z":111,"sym":"Rg","cn":"𬬭","en":"Roentgenium","mass":"[282]","cat":"transition","period":7,"group":11,"glabel":"ⅠB","row":7,"col":11,"block":"d","ox":"+3","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d⁹ 7s²（预测）","shells":[2,8,18,32,32,17,2],"notes":["人工合成超重元素，以伦琴命名。"],"uses":"基础科研。","new":false},{"z":112,"sym":"Cn","cn":"鿔","en":"Copernicium","mass":"[285]","cat":"transition","period":7,"group":12,"glabel":"ⅡB","row":7,"col":12,"block":"d","ox":"+2","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d¹⁰ 7s²（预测）","shells":[2,8,18,32,32,18,2],"notes":["人工合成超重元素，以哥白尼命名。"],"uses":"基础科研。","new":false},{"z":113,"sym":"Nh","cn":"鉨","en":"Nihonium","mass":"[286]","cat":"posttrans","period":7,"group":13,"glabel":"ⅢA","row":7,"col":13,"block":"p","ox":"+1, +3","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p¹（预测）","shells":[2,8,18,32,32,18,3],"notes":["2016 年正式命名（日本理化学研究所合成）。","最新确认的第 113 号元素，中文名“鉨”。"],"uses":"基础科研。","new":true},{"z":114,"sym":"Fl","cn":"鈇","en":"Flerovium","mass":"[289]","cat":"posttrans","period":7,"group":14,"glabel":"ⅣA","row":7,"col":14,"block":"p","ox":"+2","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p²（预测）","shells":[2,8,18,32,32,18,4],"notes":["2016 年正式命名，以弗廖罗夫核反应实验室命名。","最新确认的第 114 号元素。"],"uses":"基础科研。","new":true},{"z":115,"sym":"Mc","cn":"镆","en":"Moscovium","mass":"[290]","cat":"posttrans","period":7,"group":15,"glabel":"ⅤA","row":7,"col":15,"block":"p","ox":"+1, +3","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p³（预测）","shells":[2,8,18,32,32,18,5],"notes":["2016 年正式命名，以莫斯科命名。","最新确认的第 115 号元素。"],"uses":"基础科研。","new":true},{"z":116,"sym":"Lv","cn":"鉝","en":"Livermorium","mass":"[293]","cat":"posttrans","period":7,"group":16,"glabel":"ⅥA","row":7,"col":16,"block":"p","ox":"+2","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁴（预测）","shells":[2,8,18,32,32,18,6],"notes":["2016 年正式命名，以利弗莫尔实验室命名。","最新确认的第 116 号元素。"],"uses":"基础科研。","new":true},{"z":117,"sym":"Ts","cn":"鿬","en":"Tennessine","mass":"[294]","cat":"halogen","period":7,"group":17,"glabel":"ⅦA","row":7,"col":17,"block":"p","ox":"-1, +1","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁵（预测）","shells":[2,8,18,32,32,18,7],"notes":["2016 年正式命名，以美国田纳西州命名。","最新确认的第 117 号元素，属卤素。"],"uses":"基础科研。","new":true},{"z":118,"sym":"Og","cn":"鿫","en":"Oganesson","mass":"[294]","cat":"noble","period":7,"group":18,"glabel":"0","row":7,"col":18,"block":"p","ox":"0","state":"固态","mp":"—","bp":"—","density":"—","eneg":"—","config":"[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁶（预测）","shells":[2,8,18,32,32,18,8],"notes":["2016 年正式命名，以奥加涅相命名。","目前已知的最后一个元素，属稀有气体，理论性质特殊。"],"uses":"基础科研。","new":true}];
+const CATLABEL = {"alkali":"碱金属","alkaline":"碱土金属","transition":"过渡金属","posttrans":"其他金属","metalloid":"准金属","nonmetal":"非金属","halogen":"卤素","noble":"稀有气体","lanthanide":"镧系","actinide":"锕系"};
+const COLORS = {"alkali": "#ff6b81", "alkaline": "#ffa94d", "transition": "#4dabf7", "posttrans": "#20c997", "metalloid": "#9775fa", "nonmetal": "#51cf66", "halogen": "#fcc419", "noble": "#22b8cf", "lanthanide": "#e64980", "actinide": "#e8590c"};
+
+/* ===== 构建周期表 ===== */
+const pt = document.getElementById('pt');
+const legend = document.getElementById('legend');
+Object.entries(CATLABEL).forEach(([k,v])=>{
+  const c = document.createElement('span'); c.className='chip';
+  c.innerHTML = `<span class="dot" style="background:${COLORS[k]};color:${COLORS[k]}"></span>${v}`;
+  legend.appendChild(c);
+});
+
+ELEMENTS.forEach((el, i)=>{
+  const btn = document.createElement('button');
+  btn.className = 'cell';
+  btn.dataset.z = el.z;
+  btn.style.gridColumn = el.col;
+  btn.style.gridRow = el.row;
+  btn.style.setProperty('--c', COLORS[el.cat]);
+  btn.style.setProperty('--d', (i*14)+'ms');
+  btn.setAttribute('aria-label', `${el.z} ${el.cn} ${el.sym}`);
+  btn.innerHTML = `<span class="num">${el.z}</span><span class="sym">${el.sym}</span><span class="cn">${el.cn}${el.new?'<span class="newtag">新</span>':''}</span><span class="m">${el.mass}</span>`;
+  btn.addEventListener('click', ()=>openDetail(el.z));
+  pt.appendChild(btn);
+});
+
+/* 镧系/锕系占位 + 间隔 */
+const ph1 = document.createElement('div'); ph1.className='placeholder'; ph1.style.gridRow=6; ph1.textContent='57–71 镧系';
+const ph2 = document.createElement('div'); ph2.className='placeholder'; ph2.style.gridRow=7; ph2.textContent='89–103 锕系';
+const gap = document.createElement('div'); gap.className='fgap';
+pt.append(ph1, ph2, gap);
+document.getElementById('cnt').textContent = ELEMENTS.length;
+
+/* ===== 详情 ===== */
+const detail = document.getElementById('detail');
+const scrim = document.getElementById('scrim');
+const dBody = document.getElementById('dBody');
+const dAccent = document.getElementById('dAccent');
+let activeCell = null;
+
+function openDetail(z){
+  const el = ELEMENTS.find(e=>e.z===z);
+  if(!el) return;
+  const c = COLORS[el.cat];
+  detail.style.setProperty('--c', c);
+  dAccent.style.background = `linear-gradient(90deg,${c},transparent)`;
+  const newBadge = el.new ? `<span class="newtag">最新命名</span>` : '';
+  dBody.innerHTML = `
+    <div class="d-top">
+      <div class="d-sym">${el.sym}</div>
+      <div class="d-id">
+        <div class="d-cn">${el.cn} ${newBadge}</div>
+        <div class="d-en">${el.en}</div>
+        <div class="d-cat">${CATLABEL[el.cat]}</div>
+      </div>
+    </div>
+    <div class="d-sec">
+      <h3>基本信息</h3>
+      <div class="kv">
+        <div class="item"><div class="k">原子序数</div><div class="v">${el.z}</div></div>
+        <div class="item"><div class="k">相对原子质量</div><div class="v">${el.mass}</div></div>
+        <div class="item"><div class="k">周期 / 族</div><div class="v">第 ${el.period} 周期 · ${el.glabel}族</div></div>
+        <div class="item"><div class="k">元素分区</div><div class="v">${el.block} 区</div></div>
+        <div class="item"><div class="k">常见化合价</div><div class="v">${el.ox}</div></div>
+        <div class="item"><div class="k">常温状态</div><div class="v">${el.state}</div></div>
+      </div>
+    </div>
+    <div class="d-sec">
+      <h3>电子排布</h3>
+      <div class="config">${el.config}</div>
+      <div class="shell">${el.shells.map((n,i)=>`<span class="k">${'KLMNOPQ'[i]}</span><span class="s">${n}</span>`).join('')}</div>
+    </div>
+    <div class="d-sec">
+      <h3>物理性质</h3>
+      <div class="kv">
+        <div class="item"><div class="k">熔点</div><div class="v">${el.mp}</div></div>
+        <div class="item"><div class="k">沸点</div><div class="v">${el.bp}</div></div>
+        <div class="item"><div class="k">密度</div><div class="v">${el.density}</div></div>
+        <div class="item"><div class="k">电负性(Pauling)</div><div class="v">${el.eneg}</div></div>
+      </div>
+    </div>
+    <div class="d-sec">
+      <h3>高中化学要点</h3>
+      <ul class="notes">${el.notes.map(n=>`<li>${n}</li>`).join('')}</ul>
+    </div>
+    <div class="d-sec">
+      <h3>主要用途</h3>
+      <div class="uses">${el.uses}</div>
+    </div>`;
+  detail.classList.add('open');
+  detail.setAttribute('aria-hidden','false');
+  scrim.classList.add('show');
+  if(activeCell) activeCell.classList.remove('active');
+  activeCell = [...pt.querySelectorAll('.cell')].find(b=>+b.dataset.z===z);
+  if(activeCell) activeCell.classList.add('active');
+}
+
+function closeDetail(){
+  detail.classList.remove('open');
+  detail.setAttribute('aria-hidden','true');
+  scrim.classList.remove('show');
+  if(activeCell){activeCell.classList.remove('active');activeCell=null;}
+}
+document.getElementById('dClose').addEventListener('click', closeDetail);
+scrim.addEventListener('click', closeDetail);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDetail(); });
+
+/* ===== 背景改由 HALOFLUX iframe 渲染（原星空/光斑脚本已移除） ===== */
+</script>
 </body>
 </html>
